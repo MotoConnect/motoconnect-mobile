@@ -1,8 +1,8 @@
 package fr.motoconnect.data.model
 
 data class User(
-    val id: String,
-    val caseId: Int,
-    val language: String,
-    val motos: List<Moto>
+    var id: String?,
+    var caseId: Int? = null,
+    var language: String = "fr",
+    var motos: List<Moto>? = null
 )

@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import fr.motoconnect.R
 import fr.motoconnect.data.model.SignInResult
+import fr.motoconnect.data.model.User
 import fr.motoconnect.data.model.UserData
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.CancellationException
@@ -50,10 +51,12 @@ class GoogleAuthUiClient(
                     .get()
                     .await().exists()
                 if(!checkUser){
+                    val newUser = User(user.uid)
+
                     Log.d("CheckUser", "The user ${user.uid} does not exists!")
                     db.collection("users")
                         .document(user.uid)
-                        .set(data)
+                        .set(newUser)
                 }
             }
             SignInResult(
