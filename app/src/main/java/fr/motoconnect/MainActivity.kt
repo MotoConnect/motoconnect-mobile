@@ -20,7 +20,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -37,6 +36,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
 import fr.motoconnect.data.service.GoogleAuthUiClient
 import fr.motoconnect.ui.navigation.MotoConnectNavigation
+import fr.motoconnect.ui.screen.CreateMotoScreen
 import fr.motoconnect.ui.screen.HomeScreen
 import fr.motoconnect.ui.screen.MapScreen
 import fr.motoconnect.ui.screen.MotoScreen
@@ -89,7 +89,6 @@ class MainActivity : ComponentActivity() {
                             navController.navigate(MotoConnectNavigation.Homepage.name)
                         }
                     }
-
                     val launcher = rememberLauncherForActivityResult(
                         contract = ActivityResultContracts.StartIntentSenderForResult(),
                         onResult = { result ->
@@ -192,7 +191,7 @@ fun MainScreen(
                 MapScreen()
             }
             composable(MotoConnectNavigation.Moto.name) {
-                MotoScreen()
+                MotoScreen(navController = navController)
             }
             composable(MotoConnectNavigation.Profile.name) {
                 ProfileScreen(
@@ -200,6 +199,10 @@ fun MainScreen(
                     onSignOut = onSignout
                 )
             }
+            composable("moto-create") {
+                CreateMotoScreen()
+            }
+
         }
     }
 }

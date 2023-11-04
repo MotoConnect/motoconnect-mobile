@@ -1,5 +1,6 @@
 package fr.motoconnect.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import fr.motoconnect.data.model.SignInResult
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,5 +27,5 @@ class AuthViewModel: ViewModel() {
 
 data class SignInState(
     val isSignInSuccessful: Boolean = false,
-    val signInError: String? = null
+    val signInError: String? = null,
 )
