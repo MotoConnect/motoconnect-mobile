@@ -37,9 +37,14 @@ import fr.motoconnect.data.model.UserData
 import androidx.compose.ui.platform.LocalContext
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.background
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.edit
 
+//Temporaire?
 fun getSharedPreferences(context: Context): SharedPreferences {
     return context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 }
@@ -52,71 +57,147 @@ fun ProfileScreen(
 ) {
     val context = LocalContext.current
     val sharedPreferences = getSharedPreferences(context)
-    var switchStateLocation by rememberSaveable { mutableStateOf(sharedPreferences.getBoolean("switchStateLocation", false)) }
-    var switchStateNotification by rememberSaveable { mutableStateOf(sharedPreferences.getBoolean("switchStateNotification", false)) }
-    var switchStateDisplay by rememberSaveable { mutableStateOf(sharedPreferences.getBoolean("switchStateDisplay", false)) }
+    var switchStateLocation by rememberSaveable {
+        mutableStateOf(
+            sharedPreferences.getBoolean(
+                "switchStateLocation",
+                false
+            )
+        )
+    }
+    var switchStateNotification by rememberSaveable {
+        mutableStateOf(
+            sharedPreferences.getBoolean(
+                "switchStateNotification",
+                false
+            )
+        )
+    }
+    var switchStateDisplay by rememberSaveable {
+        mutableStateOf(
+            sharedPreferences.getBoolean(
+                "switchStateDisplay",
+                false
+            )
+        )
+    }
 
-
-    Column(
-        modifier = Modifier.fillMaxSize()
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = colorResource(id = R.color.broken_white))
             .padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if(userData?.username != null) {
-            Card (
+        item {
+            Text(
+                text = "Screen Profile",
+                color = colorResource(R.color.broken_white),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .background(color = colorResource(R.color.purple), shape = CircleShape)
+                    .padding(8.dp)
+                    .fillMaxWidth()
+            )
+        }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            if (userData?.username != null) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = colorResource(R.color.purple),
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 6.dp
+                    ), modifier = Modifier
+                        .height(200.dp)
+                        .fillMaxWidth()
+                )
+                {
+                    Text(
+                        text = "Profil",
+                        color = colorResource(R.color.broken_white),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(14.dp)
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(R.drawable.moto),
+                            contentDescription = "Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.padding(14.dp)
+                        )
+                        Column(
+                            modifier = Modifier.padding(14.dp),
+                            verticalArrangement = Arrangement.Bottom
+                        ) {
+                            Text(
+                                text = userData.username,
+                                color = colorResource(R.color.broken_white),
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Text(
+                                text = userData.userId,
+                                color = colorResource(R.color.broken_white),
+                                fontSize = 15.sp,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = colorResource(R.color.purple),
+                ),
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 6.dp
-                ),modifier = Modifier
+                ), modifier = Modifier
                     .height(200.dp)
-                    .fillMaxWidth())
+                    .fillMaxWidth()
+            )
             {
                 Text(
-                    text = "Profil",
+                    text = "Préférences",
+                    color = colorResource(R.color.broken_white),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(14.dp)
                 )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = painterResource(R.drawable.moto),
-                        contentDescription = "Image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.padding(14.dp)
-                    )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+                {
                     Column(
                         modifier = Modifier.padding(14.dp),
-                        verticalArrangement = Arrangement.Bottom
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = userData.username,
+                            text = "Location",
+                            color = colorResource(R.color.broken_white),
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                         )
-                        Text(
-                            text = userData.userId,
-                            fontSize = 15.sp,
-                            )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Card (
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 6.dp
-                ),modifier = Modifier
-                    .height(200.dp)
-                    .fillMaxWidth())
-            {
-                Row(horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier.padding(14.dp)
-                        .fillMaxWidth()){
                         Switch(
                             checked = switchStateLocation,
-                            onCheckedChange = { switchStateLocation = it
+                            onCheckedChange = {
+                                switchStateLocation = it
                                 sharedPreferences.edit {
                                     putBoolean("switchStateLocation", it)
                                     apply()
-                                }},
+                                }
+                            },
                             thumbContent = if (switchStateLocation) {
                                 {
                                     Icon(
@@ -135,14 +216,27 @@ fun ProfileScreen(
                                 }
                             }
                         )
-                        Spacer(modifier = Modifier.width(16.dp))
+                    }
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Notification",
+                            color = colorResource(R.color.broken_white),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
                         Switch(
                             checked = switchStateNotification,
-                            onCheckedChange = { switchStateNotification = it
+                            onCheckedChange = {
+                                switchStateNotification = it
                                 sharedPreferences.edit {
                                     putBoolean("switchStateNotification", it)
                                     apply()
-                                }},
+                                }
+                            },
                             thumbContent = if (switchStateNotification) {
                                 {
                                     Icon(
@@ -161,14 +255,27 @@ fun ProfileScreen(
                                 }
                             }
                         )
-                        Spacer(modifier = Modifier.width(16.dp))
+                    }
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Display",
+                            color = colorResource(R.color.broken_white),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
                         Switch(
                             checked = switchStateDisplay,
-                            onCheckedChange = { switchStateDisplay = it
+                            onCheckedChange = {
+                                switchStateDisplay = it
                                 sharedPreferences.edit {
                                     putBoolean("switchStateDisplay", it)
                                     apply()
-                                }},
+                                }
+                            },
                             thumbContent = if (switchStateDisplay) {
                                 {
                                     Icon(
@@ -187,11 +294,55 @@ fun ProfileScreen(
                                 }
                             }
                         )
+                    }
                 }
             }
         }
-        Button(onClick = onSignOut) {
-            Text(text = "Log Out")
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = colorResource(R.color.purple),
+                ),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 6.dp
+                ), modifier = Modifier
+                    .height(200.dp)
+                    .fillMaxWidth()
+            )
+            {
+                Text(
+                    text = "Actions",
+                    color = colorResource(R.color.broken_white),
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(14.dp)
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+                {
+                    Text(
+                        text = "Disconnection",
+                        color = colorResource(R.color.broken_white),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Button(onClick = onSignOut) {
+                        Text(
+                            text = "Log Out",
+                            color = colorResource(R.color.broken_white)
+                        )
+                    }
+                }
+            }
+        }
+        item {
+
         }
     }
 }
