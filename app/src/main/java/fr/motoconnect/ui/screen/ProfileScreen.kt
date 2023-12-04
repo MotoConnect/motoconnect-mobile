@@ -40,6 +40,7 @@ import android.content.SharedPreferences
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.edit
@@ -49,11 +50,15 @@ fun getSharedPreferences(context: Context): SharedPreferences {
     return context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 }
 
+fun onAccountDelete(){
+    //TODO
+}
+
 
 @Composable
 fun ProfileScreen(
     userData: UserData?,
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
 ) {
     val context = LocalContext.current
     val sharedPreferences = getSharedPreferences(context)
@@ -91,7 +96,7 @@ fun ProfileScreen(
     ) {
         item {
             Text(
-                text = "Screen Profile",
+                text = "Settings",
                 color = colorResource(R.color.broken_white),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -117,7 +122,7 @@ fun ProfileScreen(
                 )
                 {
                     Text(
-                        text = "Profil",
+                        text = "Profile",
                         color = colorResource(R.color.broken_white),
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -166,7 +171,7 @@ fun ProfileScreen(
             )
             {
                 Text(
-                    text = "Préférences",
+                    text = "Preferences",
                     color = colorResource(R.color.broken_white),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -321,24 +326,64 @@ fun ProfileScreen(
                     modifier = Modifier.padding(14.dp)
                 )
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier
                         .fillMaxWidth()
                 )
                 {
-                    Text(
-                        text = "Disconnection",
-                        color = colorResource(R.color.broken_white),
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                    Button(onClick = onSignOut) {
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Text(
-                            text = "Log Out",
-                            color = colorResource(R.color.broken_white)
+                            text = "Disconnection",
+                            color = colorResource(R.color.broken_white),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
                         )
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Button(
+                            onClick = onSignOut,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(R.color.brown),
+                            )
+
+                        ) {
+                            Text(
+                                text = "Log Out",
+                                color = colorResource(R.color.broken_white)
+                            )
+                        }
                     }
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    )
+                    {
+                        Text(
+                            text = "Account deletion",
+                            color = colorResource(R.color.broken_white),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Button(
+                            onClick = {onAccountDelete() },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(R.color.brown),
+                            )
+                        ) {
+                            Text(
+                                text = "Delete",
+                                color = colorResource(R.color.broken_white)
+                            )
+                        }
+                    }
+
                 }
+
             }
         }
         item {
