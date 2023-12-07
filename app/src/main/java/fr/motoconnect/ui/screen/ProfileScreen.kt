@@ -39,14 +39,18 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.core.content.edit
 import firebase.com.protolitewrapper.BuildConfig
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.icons.outlined.Info
 
 //Temporaire?
 fun getSharedPreferences(context: Context): SharedPreferences {
@@ -57,14 +61,10 @@ fun onAccountDelete() {
     //TODO
 }
 
-fun onAppInfo() {
-    //TODO
-}
-
 fun onAppVersion(context: Context) {
     Toast.makeText(
         context,
-        "Version Name : " + BuildConfig.VERSION_NAME + "\n" + "Version Code : " + BuildConfig.VERSION_CODE.toString() ,
+        "Version Name : " + BuildConfig.VERSION_NAME + "\n" + "Version Code : " + BuildConfig.VERSION_CODE.toString(),
         Toast.LENGTH_LONG
     ).show()
 }
@@ -75,6 +75,7 @@ fun ProfileScreen(
     userData: UserData?,
     onSignOut: () -> Unit,
 ) {
+    var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val sharedPreferences = getSharedPreferences(context)
     var switchStateLocation by rememberSaveable {
@@ -454,7 +455,7 @@ fun ProfileScreen(
                 )
                 {
                     Button(
-                        onClick = { onAppInfo() },
+                        onClick = { showDialog = true },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(R.color.brown),
                         )
@@ -479,5 +480,45 @@ fun ProfileScreen(
                 }
             }
         }
+    }
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Row (horizontalArrangement = Arrangement.SpaceEvenly){
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = null,
+                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "App Info",
+                        color = colorResource(R.color.broken_white),
+                    )
+                }
+
+            },
+            text = {
+                Text(
+                    text = "This is the app info.",
+                    color = colorResource(R.color.broken_white)
+                )
+            },
+            backgroundColor = colorResource(R.color.purple),
+            confirmButton = {
+                Button(
+                    onClick = { showDialog = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(R.color.brown),
+                    )
+                ) {
+                    Text(
+                        text = "Close",
+                        color = colorResource(R.color.broken_white)
+                    )
+                }
+            }
+        )
     }
 }
