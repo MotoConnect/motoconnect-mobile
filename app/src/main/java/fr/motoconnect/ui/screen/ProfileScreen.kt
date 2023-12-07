@@ -37,6 +37,7 @@ import fr.motoconnect.data.model.UserData
 import androidx.compose.ui.platform.LocalContext
 import android.content.Context
 import android.content.SharedPreferences
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -45,6 +46,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.core.content.edit
+import firebase.com.protolitewrapper.BuildConfig
 
 //Temporaire?
 fun getSharedPreferences(context: Context): SharedPreferences {
@@ -59,8 +61,12 @@ fun onAppInfo() {
     //TODO
 }
 
-fun onAppVersion() {
-    //TODO
+fun onAppVersion(context: Context) {
+    Toast.makeText(
+        context,
+        "Version Name : " + BuildConfig.VERSION_NAME + "\n" + "Version Code : " + BuildConfig.VERSION_CODE.toString() ,
+        Toast.LENGTH_LONG
+    ).show()
 }
 
 
@@ -455,12 +461,12 @@ fun ProfileScreen(
 
                     ) {
                         Text(
-                            text = "Application Infos",
+                            text = "Application infos",
                             color = colorResource(R.color.broken_white)
                         )
                     }
                     Button(
-                        onClick = { onAppVersion() },
+                        onClick = { onAppVersion(context) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(R.color.brown),
                         )
