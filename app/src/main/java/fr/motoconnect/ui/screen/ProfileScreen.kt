@@ -43,6 +43,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.core.content.edit
 
 //Temporaire?
@@ -50,7 +51,15 @@ fun getSharedPreferences(context: Context): SharedPreferences {
     return context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 }
 
-fun onAccountDelete(){
+fun onAccountDelete() {
+    //TODO
+}
+
+fun onAppInfo() {
+    //TODO
+}
+
+fun onAppVersion() {
     //TODO
 }
 
@@ -129,21 +138,45 @@ fun ProfileScreen(
                         modifier = Modifier.padding(14.dp)
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(R.drawable.moto),
-                            contentDescription = "Image",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.padding(14.dp)
+                        Column(
+                            modifier = Modifier.padding(14.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         )
+                        {
+                            Image(
+                                painter = painterResource(R.drawable.moto),
+                                contentDescription = "Image",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.padding(10.dp)
+                            )
+                            Text(
+                                text = "Profile picture",
+                                color = colorResource(R.color.broken_white),
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                        }
                         Column(
                             modifier = Modifier.padding(14.dp),
                             verticalArrangement = Arrangement.Bottom
                         ) {
                             Text(
+                                text = "Username :",
+                                color = colorResource(R.color.broken_white),
+                                fontSize = 15.sp,
+                                textDecoration = TextDecoration.Underline
+                            )
+                            Text(
                                 text = userData.username,
                                 color = colorResource(R.color.broken_white),
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
+                            )
+                            Text(
+                                text = "Account ID :",
+                                color = colorResource(R.color.broken_white),
+                                fontSize = 15.sp,
+                                textDecoration = TextDecoration.Underline
                             )
                             Text(
                                 text = userData.userId,
@@ -351,7 +384,7 @@ fun ProfileScreen(
 
                         ) {
                             Text(
-                                text = "Log Out",
+                                text = "Logout",
                                 color = colorResource(R.color.broken_white)
                             )
                         }
@@ -370,7 +403,7 @@ fun ProfileScreen(
                         )
                         Spacer(modifier = Modifier.height(5.dp))
                         Button(
-                            onClick = {onAccountDelete() },
+                            onClick = { onAccountDelete() },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = colorResource(R.color.brown),
                             )
@@ -381,13 +414,64 @@ fun ProfileScreen(
                             )
                         }
                     }
-
                 }
-
             }
         }
         item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = colorResource(R.color.purple),
+                ),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 6.dp
+                ), modifier = Modifier
+                    .height(200.dp)
+                    .fillMaxWidth()
+            )
+            {
+                Text(
+                    text = "About",
+                    color = colorResource(R.color.broken_white),
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(14.dp)
+                )
+                Spacer(modifier = Modifier.height(25.dp))
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+                {
+                    Button(
+                        onClick = { onAppInfo() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(R.color.brown),
+                        )
 
+                    ) {
+                        Text(
+                            text = "Application Infos",
+                            color = colorResource(R.color.broken_white)
+                        )
+                    }
+                    Button(
+                        onClick = { onAppVersion() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(R.color.brown),
+                        )
+                    ) {
+                        Text(
+                            text = "Application version",
+                            color = colorResource(R.color.broken_white)
+                        )
+                    }
+                }
+            }
         }
     }
 }
