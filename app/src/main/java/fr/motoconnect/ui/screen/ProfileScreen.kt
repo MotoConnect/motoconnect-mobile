@@ -28,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +50,9 @@ import androidx.core.content.edit
 import firebase.com.protolitewrapper.BuildConfig
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.ui.draw.clip
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 
 //Temporaire?
 fun getSharedPreferences(context: Context): SharedPreferences {
@@ -150,17 +152,17 @@ fun ProfileScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         )
                         {
-                            Image(
-                                painter = painterResource(R.drawable.moto),
-                                contentDescription = "Image",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.padding(10.dp)
+                            val painter = rememberAsyncImagePainter(
+                                ImageRequest
+                                    .Builder(LocalContext.current)
+                                    .data(data = userData.profilePictureUrl)
+                                    .build()
                             )
-                            Text(
-                                text = "Profile picture",
-                                color = colorResource(R.color.broken_white),
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold,
+                            Image(
+                                painter = painter,
+                                contentDescription = "Profile picture",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.width(100.dp).height(100.dp).clip(shape = CircleShape)
                             )
                         }
                         Column(
@@ -176,19 +178,18 @@ fun ProfileScreen(
                             Text(
                                 text = userData.username,
                                 color = colorResource(R.color.broken_white),
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 14.sp,
                             )
                             Text(
-                                text = "Account ID :",
+                                text = "Email :",
                                 color = colorResource(R.color.broken_white),
                                 fontSize = 15.sp,
                                 textDecoration = TextDecoration.Underline
                             )
                             Text(
-                                text = userData.userId,
+                                text = userData.email!!,
                                 color = colorResource(R.color.broken_white),
-                                fontSize = 15.sp,
+                                fontSize = 14.sp,
                             )
                         }
                     }
@@ -511,7 +512,8 @@ fun ProfileScreen(
                     onClick = { showDialog = false },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(R.color.brown),
-                    )
+                    ),
+                    modifier = Modifier.padding(0.dp,0.dp,10.dp,10.dp),
                 ) {
                     Text(
                         text = "Close",
