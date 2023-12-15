@@ -36,6 +36,7 @@ import fr.motoconnect.data.model.UserData
 import androidx.compose.ui.platform.LocalContext
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.width
@@ -53,6 +54,11 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.ui.draw.clip
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 
 //Temporaire?
 fun getSharedPreferences(context: Context): SharedPreferences {
@@ -71,7 +77,24 @@ fun onAppVersion(context: Context) {
     ).show()
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
+fun askNotification(notificationPermission: PermissionState, context: Context){
+    if (!notificationPermission.status.isGranted) {
+        if (notificationPermission.status.shouldShowRationale) {
+            // Show a rationale if needed (optional)
+           // showRationalDialog.value = true*
+            Log.d("NOTIF","A accepté les notif")
+            //TODO
+        } else {
+            // Request the permission
+            notificationPermission.launchPermissionRequest()
+        }
+    } else {
+        Toast.makeText(context, "Permission Given Already", Toast.LENGTH_SHORT).show()
+    }
+}
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ProfileScreen(
     userData: UserData?,
@@ -104,6 +127,9 @@ fun ProfileScreen(
             )
         )
     }
+    val notificationPermission = rememberPermissionState(
+        permission = android.Manifest.permission.POST_NOTIFICATIONS
+    )
 
     LazyColumn(
         modifier = Modifier
@@ -162,7 +188,10 @@ fun ProfileScreen(
                                 painter = painter,
                                 contentDescription = "Profile picture",
                                 contentScale = ContentScale.Crop,
-                                modifier = Modifier.width(100.dp).height(100.dp).clip(shape = CircleShape)
+                                modifier = Modifier
+                                    .width(100.dp)
+                                    .height(100.dp)
+                                    .clip(shape = CircleShape)
                             )
                         }
                         Column(
@@ -277,6 +306,8 @@ fun ProfileScreen(
                         Switch(
                             checked = switchStateNotification,
                             onCheckedChange = {
+                                Log.d("TAG", "ProfileScreen: $it")
+                                askNotification(notificationPermission,context)
                                 switchStateNotification = it
                                 sharedPreferences.edit {
                                     putBoolean("switchStateNotification", it)
