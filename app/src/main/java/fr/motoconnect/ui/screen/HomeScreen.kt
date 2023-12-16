@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -60,6 +61,8 @@ import fr.motoconnect.viewmodel.MapViewModel
 fun HomeScreen(
     navController: NavController
 ) {
+
+    val TAG = "HomeScreen"
     val context = LocalContext.current
 
     val mapViewModel: MapViewModel = viewModel()
@@ -89,7 +92,7 @@ fun HomeScreen(
             currentDevicePosition =
                 LatLng(lastKnownLocation!!.latitude, lastKnownLocation!!.longitude)
         } else {
-            Log.e("TAG", "Exception: ${task.exception}" )
+            Log.e(TAG, "Exception: ${task.exception}" )
         }
     }
 
@@ -106,7 +109,7 @@ fun HomeScreen(
                 currentMotoPosition
             ).toString() + " km"
             Log.d(
-                "MapScreen",
+                TAG,
                 "Distance : $distanceBetweenDeviceAndMoto between $currentDevicePosition and $currentMotoPosition"
             )
         }
@@ -123,23 +126,22 @@ fun HomeScreen(
     ) {
 
         if (currentMotoPosition != null) (
-                Marker(
-                    state = MarkerState(
-                        position = currentMotoPosition
-                    ),
-                    icon = bitmapDescriptorFromVector(context, R.drawable.moto_position),
-                )
-                )
-
+            Marker(
+                state = MarkerState(
+                    position = currentMotoPosition
+                ),
+                icon = bitmapDescriptorFromVector(context, R.drawable.moto_position),
+            )
+        )
 
         if (currentDevicePosition.latitude != 0.0 && currentDevicePosition.longitude != 0.0) (
-                Marker(
-                    state = MarkerState(
-                        position = currentDevicePosition
-                    ),
-                    icon = bitmapDescriptorFromVector(context, R.drawable.device_position),
-                )
-                )
+            Marker(
+                state = MarkerState(
+                    position = currentDevicePosition
+                ),
+                icon = bitmapDescriptorFromVector(context, R.drawable.device_position),
+            )
+        )
 
     }
     if (mapUiState.value.currentMoto != null) {
@@ -159,7 +161,9 @@ fun MapInfoMoto(
     currentMoto: String,
     caseState: Boolean
 ) {
-    val caseStateString = if (caseState) "En mouvement" else "A l'arrêt"
+    val caseStateString = if (caseState) stringResource(id = R.string.moto_in_motion) else stringResource(
+        id = R.string.moto_stationary
+    )
     val color = if (caseState) Color(0xFF52CA5E) else Color(0xFFEC6D50)
 
     Box(
@@ -203,7 +207,7 @@ fun MapInfoMoto(
                             navController.navigate(MotoConnectNavigation.Moto.name)
                         }
                 )
-                Text(text = "Distance : $distanceBetweenDeviceAndMoto")
+                Text(text = stringResource(R.string.distance, distanceBetweenDeviceAndMoto))
             }
         }
     }
