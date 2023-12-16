@@ -13,4 +13,5 @@
     <string name="moto_in_motion">In motion</string>
     <string name="moto_stationary">Stationary</string>
     <string name="distance" translatable="false">Distance : %1$s</string>
+    <string name="unknown">Unknown</string>
 </resources>

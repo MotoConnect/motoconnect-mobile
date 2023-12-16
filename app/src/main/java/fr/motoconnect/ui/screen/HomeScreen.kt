@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -83,7 +84,7 @@ fun HomeScreen(
     var currentDevicePosition by remember {
         mutableStateOf(LatLng(0.0, 0.0))
     }
-    var distanceBetweenDeviceAndMoto by remember { mutableStateOf("Inconnue") }
+    var distanceBetweenDeviceAndMoto by remember { mutableStateOf(context.applicationContext.getText(R.string.unknown).toString()) }
 
     val locationResult = fusedLocationProviderClient.lastLocation
     locationResult.addOnCompleteListener(context as MainActivity) { task ->

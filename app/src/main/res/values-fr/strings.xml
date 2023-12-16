@@ -11,4 +11,5 @@
     <string name="sign_out_success">Déconnexion en cours</string>
     <string name="moto_in_motion">En mouvement</string>
     <string name="moto_stationary">A l\'arrêt</string>
+    <string name="unknown">Inconnue</string>
 </resources>
