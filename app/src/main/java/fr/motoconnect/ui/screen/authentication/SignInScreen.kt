@@ -53,7 +53,8 @@ fun SignInScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(text = "Sign In")
+
+        Text(text = "Sign in", style = TextStyle(fontSize = 30.sp))
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
