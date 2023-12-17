@@ -15,17 +15,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -75,7 +74,8 @@ class MainActivity : ComponentActivity() {
 
         val auth = FirebaseAuth.getInstance()
         val db = Firebase.firestore
-        val authenticationViewModel = AuthenticationViewModel(auth, db)
+
+        val authenticationViewModel = AuthenticationViewModel(auth, db, applicationContext)
 
         setContent {
             MotoConnectTheme {
@@ -97,8 +97,11 @@ fun MainScreen(
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+    val authUIState by authenticationViewModel.authUiState.collectAsState()
 
-    if (auth.currentUser != null) {
+    Log.d("TAG", "MainScreen: " + auth.currentUser?.email + " " + authUIState.isLogged)
+
+    if (auth.currentUser != null && authUIState.isLogged) {
         Scaffold(
             bottomBar = {
                 BottomNavigation(

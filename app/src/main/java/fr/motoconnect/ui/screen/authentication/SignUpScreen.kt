@@ -1,5 +1,6 @@
 package fr.motoconnect.ui.screen.authentication
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -23,13 +25,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import fr.motoconnect.R
 import fr.motoconnect.ui.navigation.AuthenticationNavigationRoutes
 import fr.motoconnect.viewmodel.AuthenticationViewModel
 
@@ -38,23 +43,27 @@ import fr.motoconnect.viewmodel.AuthenticationViewModel
 fun SignUpScreen(
     authenticationViewModel: AuthenticationViewModel,
     navController: NavController
-){
+) {
     val authUiState by authenticationViewModel.authUiState.collectAsState()
 
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(color = MaterialTheme.colorScheme.tertiary),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        Text(text = "Sign up", style = TextStyle(fontSize = 30.sp))
+        Text(
+            text = stringResource(id = R.string.sign_up_title),
+            style = TextStyle(fontSize = 30.sp, color = MaterialTheme.colorScheme.primary),
+            textAlign = TextAlign.Center,
+        )
         Spacer(modifier = Modifier.padding(16.dp))
 
         TextField(
-            label = { Text(text = "E-mail") },
+            label = { Text(text = stringResource(id = R.string.email_textfield_label)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
@@ -66,7 +75,7 @@ fun SignUpScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
-            label = { Text(text = "Password") },
+            label = { Text(text = stringResource(id = R.string.password_textfield_label)) },
             value = password.value,
             isError = authUiState.errorMessage != null,
             visualTransformation = PasswordVisualTransformation(),
@@ -93,13 +102,13 @@ fun SignUpScreen(
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
-                Text(text = "Sign up")
+                Text(text = stringResource(id = R.string.sign_up_button))
             }
         }
 
         if (authUiState.errorMessage != null) {
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = authUiState.errorMessage!!)
+            Text(text = authUiState.errorMessage!!, color = MaterialTheme.colorScheme.error)
         }
     }
 
@@ -116,7 +125,7 @@ fun SignUpScreen(
                 authenticationViewModel.resetErrorMessage()
             },
         ) {
-            Text(text = "Already have an account ? Sign in here.")
+            Text(text = stringResource(id = R.string.already_have_an_account))
         }
     }
 }

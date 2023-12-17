@@ -1,40 +1,59 @@
 package fr.motoconnect.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import fr.motoconnect.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AuthenticationViewModel(
     private val auth: FirebaseAuth,
-    private val db: FirebaseFirestore
+    private val db: FirebaseFirestore,
+    private val context: Context
 ) : ViewModel() {
+
+    val TAG = "AuthenticationViewModel"
 
     private val _authUiState = MutableStateFlow(AuthUIState())
     val authUiState: StateFlow<AuthUIState> = _authUiState.asStateFlow()
 
-    fun signIn(email: String, password: String){
+    init {
+        if (auth.currentUser != null) {
+            _authUiState.value = AuthUIState(isLogged = true)
+        } else {
+            _authUiState.value = AuthUIState(isLogged = false)
+        }
+    }
+
+    fun signIn(email: String, password: String) {
         if (!isMandatoryFieldsFilled(email, password)) {
-            _authUiState.update { AuthUIState(isLogged = false, errorMessage = "Veuillez remplir tous les champs") }
+            _authUiState.value = AuthUIState(
+                isLogged = false,
+                errorMessage = context.getString(R.string.mandatory_fields_not_filled)
+            )
             return
         }
         auth.signInWithEmailAndPassword(email, password)
             .addOnFailureListener() { exception ->
-                _authUiState.update { AuthUIState(isLogged = false, errorMessage = exception.message) }
+                _authUiState.value = AuthUIState(
+                    isLogged = false,
+                    errorMessage = exception.message
+                )
             }
             .addOnCompleteListener { task ->
-                viewModelScope.launch(Dispatchers.IO) {
-                    if (task.isSuccessful) {
-                        _authUiState.update { AuthUIState(isLogged = true, errorMessage = null) }
+                viewModelScope.launch {
+                    withContext(Dispatchers.Main) {
+                        if (task.isSuccessful) {
+                            _authUiState.value = AuthUIState(isLogged = true, errorMessage = null)
+                        }
                     }
                 }
             }
@@ -42,17 +61,25 @@ class AuthenticationViewModel(
 
     fun signUp(email: String, password: String) {
         if (!isMandatoryFieldsFilled(email, password)) {
-            _authUiState.update { AuthUIState(isLogged = false, errorMessage = "Veuillez remplir tous les champs") }
+            _authUiState.value = AuthUIState(
+                isLogged = false,
+                errorMessage = context.getString(R.string.mandatory_fields_not_filled)
+            )
             return
         }
         auth.createUserWithEmailAndPassword(email, password)
             .addOnFailureListener() { exception ->
-                _authUiState.update { AuthUIState(isLogged = false, errorMessage = exception.message) }
+                _authUiState.value = AuthUIState(
+                    isLogged = false,
+                    errorMessage = exception.message
+                )
             }
             .addOnCompleteListener { task ->
-                viewModelScope.launch(Dispatchers.IO) {
-                    if (task.isSuccessful) {
-                        _authUiState.update { AuthUIState(isLogged = true, errorMessage = null) }
+                viewModelScope.launch {
+                    withContext(Dispatchers.Main) {
+                        if (task.isSuccessful) {
+                            _authUiState.value = AuthUIState(isLogged = true, errorMessage = null)
+                        }
                     }
                 }
             }
@@ -60,17 +87,25 @@ class AuthenticationViewModel(
 
     fun resetPassword(email: String) {
         if (email.isEmpty()) {
-            _authUiState.update { AuthUIState(errorMessage = "Veuillez remplir tous les champs") }
+            _authUiState.value = AuthUIState(
+                errorMessage = context.getString(R.string.mandatory_fields_not_filled)
+            )
             return
         }
         auth.sendPasswordResetEmail(email)
             .addOnFailureListener { exception ->
-                _authUiState.update { AuthUIState(errorMessage = exception.message) }
+                _authUiState.value = AuthUIState(
+                    errorMessage = exception.message
+                )
             }
             .addOnCompleteListener { task ->
-                viewModelScope.launch(Dispatchers.IO) {
-                    if (task.isSuccessful) {
-                        _authUiState.update { AuthUIState(errorMessage = "Un mail de réinitialisation vous a été envoyé") }
+                viewModelScope.launch {
+                    withContext(Dispatchers.Main) {
+                        if (task.isSuccessful) {
+                            _authUiState.value = AuthUIState(
+                                errorMessage = context.getString(R.string.reset_password_email_sent)
+                            )
+                        }
                     }
                 }
             }
@@ -90,7 +125,6 @@ class AuthenticationViewModel(
     }
 
 }
-
 
 data class AuthUIState(
     val isLogged: Boolean = false,

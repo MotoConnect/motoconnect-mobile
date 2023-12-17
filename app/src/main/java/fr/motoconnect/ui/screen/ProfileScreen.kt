@@ -31,9 +31,9 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (currentUser?.displayName != null) {
+        if (currentUser?.email != null) {
             Text(
-                text = currentUser.displayName!!,
+                text = currentUser.email!!,
                 textAlign = TextAlign.Center,
                 fontSize = 36.sp,
                 fontWeight = FontWeight.SemiBold
