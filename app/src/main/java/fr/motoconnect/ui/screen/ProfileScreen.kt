@@ -58,9 +58,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.shouldShowRationale
 
-//Temporaire?
 fun getSharedPreferences(context: Context): SharedPreferences {
     return context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 }
@@ -78,19 +76,24 @@ fun onAppVersion(context: Context) {
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-fun askNotification(notificationPermission: PermissionState, context: Context){
+fun askNotification(notificationPermission: PermissionState){
     if (!notificationPermission.status.isGranted) {
-        if (notificationPermission.status.shouldShowRationale) {
-            // Show a rationale if needed (optional)
-           // showRationalDialog.value = true*
-            Log.d("NOTIF","A accepté les notif")
-            //TODO
-        } else {
-            // Request the permission
+            Log.d("NOTIF","Demande les notif")
             notificationPermission.launchPermissionRequest()
-        }
+
     } else {
-        Toast.makeText(context, "Permission Given Already", Toast.LENGTH_SHORT).show()
+        Log.d("NOTIF","A accepté les notif")
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+fun askLocation(locationPermission: PermissionState){
+    if (!locationPermission.status.isGranted) {
+        Log.d("NOTIF","Demande la localisation")
+        locationPermission.launchPermissionRequest()
+
+    } else {
+        Log.d("NOTIF","A accepté la localisation")
     }
 }
 
@@ -103,22 +106,6 @@ fun ProfileScreen(
     var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val sharedPreferences = getSharedPreferences(context)
-    var switchStateLocation by rememberSaveable {
-        mutableStateOf(
-            sharedPreferences.getBoolean(
-                "switchStateLocation",
-                false
-            )
-        )
-    }
-    var switchStateNotification by rememberSaveable {
-        mutableStateOf(
-            sharedPreferences.getBoolean(
-                "switchStateNotification",
-                false
-            )
-        )
-    }
     var switchStateDisplay by rememberSaveable {
         mutableStateOf(
             sharedPreferences.getBoolean(
@@ -129,6 +116,9 @@ fun ProfileScreen(
     }
     val notificationPermission = rememberPermissionState(
         permission = android.Manifest.permission.POST_NOTIFICATIONS
+    )
+    val locationPermission = rememberPermissionState(
+        permission = android.Manifest.permission.ACCESS_FINE_LOCATION
     )
 
     LazyColumn(
@@ -161,7 +151,7 @@ fun ProfileScreen(
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 6.dp
                     ), modifier = Modifier
-                        .height(200.dp)
+                        .height(210.dp)
                         .fillMaxWidth()
                 )
                 {
@@ -236,7 +226,7 @@ fun ProfileScreen(
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 6.dp
                 ), modifier = Modifier
-                    .height(200.dp)
+                    .height(210.dp)
                     .fillMaxWidth()
             )
             {
@@ -249,12 +239,13 @@ fun ProfileScreen(
                 )
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
                 )
                 {
                     Column(
-                        modifier = Modifier.padding(14.dp),
+                        modifier = Modifier.padding(10.dp),
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -264,36 +255,29 @@ fun ProfileScreen(
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                         )
-                        Switch(
-                            checked = switchStateLocation,
-                            onCheckedChange = {
-                                switchStateLocation = it
-                                sharedPreferences.edit {
-                                    putBoolean("switchStateLocation", it)
-                                    apply()
-                                }
-                            },
-                            thumbContent = if (switchStateLocation) {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Check,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                }
-                            } else {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Close,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                }
+                        if(!locationPermission.status.isGranted){
+                            Button(
+                                onClick = { askLocation(locationPermission) },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colorResource(R.color.brown),
+                                )
+
+                            ) {
+                                Text(
+                                    text = "Activate location",
+                                    color = colorResource(R.color.broken_white)
+                                )
                             }
-                        )
+                        }
+                        else{
+                            Text(
+                                text = "Location activated",
+                                color = colorResource(R.color.broken_white)
+                            )
+                        }
                     }
                     Column(
-                        modifier = Modifier.padding(14.dp),
+                        modifier = Modifier.padding(10.dp),
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -303,75 +287,73 @@ fun ProfileScreen(
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                         )
-                        Switch(
-                            checked = switchStateNotification,
-                            onCheckedChange = {
-                                Log.d("TAG", "ProfileScreen: $it")
-                                askNotification(notificationPermission,context)
-                                switchStateNotification = it
-                                sharedPreferences.edit {
-                                    putBoolean("switchStateNotification", it)
-                                    apply()
-                                }
-                            },
-                            thumbContent = if (switchStateNotification) {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Check,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                }
-                            } else {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Close,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                }
+                        if(!notificationPermission.status.isGranted){
+                            Button(
+                                onClick = { askNotification(notificationPermission) },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colorResource(R.color.brown),
+                                )
+
+                            ) {
+                                Text(
+                                    text = "Activate notification",
+                                    color = colorResource(R.color.broken_white),
+                                )
                             }
-                        )
+                        }
+                        else{
+                            Text(
+                                text = "Notification activated",
+                                color = colorResource(R.color.broken_white)
+                            )
+                        }
                     }
-                    Column(
-                        modifier = Modifier.padding(14.dp),
-                        verticalArrangement = Arrangement.Bottom,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Display",
-                            color = colorResource(R.color.broken_white),
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        Switch(
-                            checked = switchStateDisplay,
-                            onCheckedChange = {
-                                switchStateDisplay = it
-                                sharedPreferences.edit {
-                                    putBoolean("switchStateDisplay", it)
-                                    apply()
-                                }
-                            },
-                            thumbContent = if (switchStateDisplay) {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Check,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                }
-                            } else {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Close,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                }
+                }
+                Column(
+                    modifier = Modifier.padding(0.dp,0.dp,0.dp,10.dp).fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+
+                ) {
+                    Text(
+                        text = "Display",
+                        color = colorResource(R.color.broken_white),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Switch(
+                        checked = switchStateDisplay,
+                        onCheckedChange = {
+                            switchStateDisplay = it
+                            sharedPreferences.edit {
+                                putBoolean("switchStateDisplay", it)
+                                apply()
                             }
+                        },
+                        thumbContent = if (switchStateDisplay) {
+                            {
+                                Icon(
+                                    imageVector = Icons.Outlined.Check,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                )
+                            }
+                        } else {
+                            {
+                                Icon(
+                                    imageVector = Icons.Outlined.Close,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                )
+                            }
+                        },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = colorResource(R.color.broken_white),
+                            checkedTrackColor = colorResource(R.color.brown),
+                            uncheckedThumbColor = colorResource(R.color.broken_white),
+                            uncheckedTrackColor = colorResource(R.color.purple),
                         )
-                    }
+                    )
                 }
             }
         }
@@ -386,7 +368,7 @@ fun ProfileScreen(
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 6.dp
                 ), modifier = Modifier
-                    .height(200.dp)
+                    .height(210.dp)
                     .fillMaxWidth()
             )
             {
@@ -467,7 +449,7 @@ fun ProfileScreen(
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 6.dp
                 ), modifier = Modifier
-                    .height(200.dp)
+                    .height(210.dp)
                     .fillMaxWidth()
             )
             {
