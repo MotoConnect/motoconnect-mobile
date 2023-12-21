@@ -31,7 +31,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fr.motoconnect.R
 import fr.motoconnect.data.model.UserData
 import androidx.compose.ui.platform.LocalContext
 import android.content.Context
@@ -44,13 +43,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.remember
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.core.content.edit
 import firebase.com.protolitewrapper.BuildConfig
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.draw.clip
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -58,6 +57,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import fr.motoconnect.ui.theme.MotoConnectTheme2
 
 fun getSharedPreferences(context: Context): SharedPreferences {
     return context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
@@ -76,24 +76,24 @@ fun onAppVersion(context: Context) {
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-fun askNotification(notificationPermission: PermissionState){
+fun askNotification(notificationPermission: PermissionState) {
     if (!notificationPermission.status.isGranted) {
-            Log.d("NOTIF","Demande les notif")
-            notificationPermission.launchPermissionRequest()
+        Log.d("NOTIF", "Demande les notif")
+        notificationPermission.launchPermissionRequest()
 
     } else {
-        Log.d("NOTIF","A accepté les notif")
+        Log.d("NOTIF", "A accepté les notif")
     }
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-fun askLocation(locationPermission: PermissionState){
+fun askLocation(locationPermission: PermissionState) {
     if (!locationPermission.status.isGranted) {
-        Log.d("NOTIF","Demande la localisation")
+        Log.d("NOTIF", "Demande la localisation")
         locationPermission.launchPermissionRequest()
 
     } else {
-        Log.d("NOTIF","A accepté la localisation")
+        Log.d("NOTIF", "A accepté la localisation")
     }
 }
 
@@ -117,36 +117,112 @@ fun ProfileScreen(
     val notificationPermission = rememberPermissionState(
         permission = android.Manifest.permission.POST_NOTIFICATIONS
     )
+    //A adapter pour la localisation
     val locationPermission = rememberPermissionState(
         permission = android.Manifest.permission.ACCESS_FINE_LOCATION
     )
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = colorResource(id = R.color.broken_white))
-            .padding(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        item {
-            Text(
-                text = "Settings",
-                color = colorResource(R.color.broken_white),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .background(color = colorResource(R.color.purple), shape = CircleShape)
-                    .padding(8.dp)
-                    .fillMaxWidth()
-            )
-        }
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-        item {
-            if (userData?.username != null) {
+    MotoConnectTheme2(activated = switchStateDisplay) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.primary)
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            item {
+                Text(
+                    text = "Settings",
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colorScheme.tertiary, shape = CircleShape)
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                )
+            }
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
+                if (userData?.username != null) {
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.tertiary,
+                        ),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 6.dp
+                        ), modifier = Modifier
+                            .height(210.dp)
+                            .fillMaxWidth()
+                    )
+                    {
+                        Text(
+                            text = "Profile",
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(14.dp)
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Column(
+                                modifier = Modifier.padding(14.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            )
+                            {
+                                val painter = rememberAsyncImagePainter(
+                                    ImageRequest
+                                        .Builder(LocalContext.current)
+                                        .data(data = userData.profilePictureUrl)
+                                        .build()
+                                )
+                                Image(
+                                    painter = painter,
+                                    contentDescription = "Profile picture",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .width(100.dp)
+                                        .height(100.dp)
+                                        .clip(shape = CircleShape)
+                                )
+                            }
+                            Column(
+                                modifier = Modifier.padding(14.dp),
+                                verticalArrangement = Arrangement.Bottom
+                            ) {
+                                Text(
+                                    text = "Username :",
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 15.sp,
+                                    textDecoration = TextDecoration.Underline
+                                )
+                                Text(
+                                    text = userData.username,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 14.sp,
+                                )
+                                Text(
+                                    text = "Email :",
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 15.sp,
+                                    textDecoration = TextDecoration.Underline
+                                )
+                                Text(
+                                    text = userData.email!!,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 14.sp,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = colorResource(R.color.purple),
+                        containerColor = MaterialTheme.colorScheme.tertiary,
                     ),
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 6.dp
@@ -156,384 +232,311 @@ fun ProfileScreen(
                 )
                 {
                     Text(
-                        text = "Profile",
-                        color = colorResource(R.color.broken_white),
+                        text = "Preferences",
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(14.dp)
                     )
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    {
+                        Column(
+                            modifier = Modifier.padding(10.dp),
+                            verticalArrangement = Arrangement.Bottom,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Location",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            if (!locationPermission.status.isGranted) {
+                                Button(
+                                    onClick = { askLocation(locationPermission) },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.secondary,
+                                    )
+
+                                ) {
+                                    Text(
+                                        text = "Activate location",
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            } else {
+                                Text(
+                                    text = "Location activated",
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                        Column(
+                            modifier = Modifier.padding(10.dp),
+                            verticalArrangement = Arrangement.Bottom,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Notification",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            if (!notificationPermission.status.isGranted) {
+                                Button(
+                                    onClick = { askNotification(notificationPermission) },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.secondary,
+                                    )
+
+                                ) {
+                                    Text(
+                                        text = "Activate notification",
+                                        color = MaterialTheme.colorScheme.primary,
+                                    )
+                                }
+                            } else {
+                                Text(
+                                    text = "Notification activated",
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
+                    Column(
+                        modifier = Modifier
+                            .padding(0.dp, 0.dp, 0.dp, 10.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+
+                        ) {
+                        Text(
+                            text = "Display",
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Switch(
+                            checked = switchStateDisplay,
+                            onCheckedChange = {
+                                switchStateDisplay = it
+                                sharedPreferences.edit {
+                                    putBoolean("switchStateDisplay", it)
+                                    apply()
+                                }
+                            },
+                            thumbContent = if (switchStateDisplay) {
+                                {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Check,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                    )
+                                }
+                            } else {
+                                {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Close,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                    )
+                                }
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = MaterialTheme.colorScheme.secondary,
+                                checkedTrackColor = MaterialTheme.colorScheme.secondary,
+                                uncheckedThumbColor = MaterialTheme.colorScheme.primary,
+                                uncheckedTrackColor = MaterialTheme.colorScheme.tertiary,
+                            )
+                        )
+                    }
+                }
+            }
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.tertiary,
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 6.dp
+                    ), modifier = Modifier
+                        .height(210.dp)
+                        .fillMaxWidth()
+                )
+                {
+                    Text(
+                        text = "Actions",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(14.dp)
+                    )
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    {
                         Column(
                             modifier = Modifier.padding(14.dp),
+                            verticalArrangement = Arrangement.Bottom,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Disconnection",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Button(
+                                onClick = onSignOut,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.secondary,
+                                )
+
+                            ) {
+                                Text(
+                                    text = "Logout",
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                        Column(
+                            modifier = Modifier.padding(14.dp),
+                            verticalArrangement = Arrangement.Bottom,
                             horizontalAlignment = Alignment.CenterHorizontally
                         )
                         {
-                            val painter = rememberAsyncImagePainter(
-                                ImageRequest
-                                    .Builder(LocalContext.current)
-                                    .data(data = userData.profilePictureUrl)
-                                    .build()
-                            )
-                            Image(
-                                painter = painter,
-                                contentDescription = "Profile picture",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .width(100.dp)
-                                    .height(100.dp)
-                                    .clip(shape = CircleShape)
-                            )
-                        }
-                        Column(
-                            modifier = Modifier.padding(14.dp),
-                            verticalArrangement = Arrangement.Bottom
-                        ) {
                             Text(
-                                text = "Username :",
-                                color = colorResource(R.color.broken_white),
+                                text = "Account deletion",
+                                color = MaterialTheme.colorScheme.primary,
                                 fontSize = 15.sp,
-                                textDecoration = TextDecoration.Underline
+                                fontWeight = FontWeight.SemiBold,
                             )
-                            Text(
-                                text = userData.username,
-                                color = colorResource(R.color.broken_white),
-                                fontSize = 14.sp,
-                            )
-                            Text(
-                                text = "Email :",
-                                color = colorResource(R.color.broken_white),
-                                fontSize = 15.sp,
-                                textDecoration = TextDecoration.Underline
-                            )
-                            Text(
-                                text = userData.email!!,
-                                color = colorResource(R.color.broken_white),
-                                fontSize = 14.sp,
-                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Button(
+                                onClick = { onAccountDelete() },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.secondary,
+                                )
+                            ) {
+                                Text(
+                                    text = "Delete",
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-        item {
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = colorResource(R.color.purple),
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 6.dp
-                ), modifier = Modifier
-                    .height(210.dp)
-                    .fillMaxWidth()
-            )
-            {
-                Text(
-                    text = "Preferences",
-                    color = colorResource(R.color.broken_white),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(14.dp)
-                )
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.tertiary,
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 6.dp
+                    ), modifier = Modifier
+                        .height(210.dp)
                         .fillMaxWidth()
                 )
                 {
-                    Column(
-                        modifier = Modifier.padding(10.dp),
-                        verticalArrangement = Arrangement.Bottom,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Location",
-                            color = colorResource(R.color.broken_white),
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        if(!locationPermission.status.isGranted){
-                            Button(
-                                onClick = { askLocation(locationPermission) },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = colorResource(R.color.brown),
-                                )
-
-                            ) {
-                                Text(
-                                    text = "Activate location",
-                                    color = colorResource(R.color.broken_white)
-                                )
-                            }
-                        }
-                        else{
-                            Text(
-                                text = "Location activated",
-                                color = colorResource(R.color.broken_white)
-                            )
-                        }
-                    }
-                    Column(
-                        modifier = Modifier.padding(10.dp),
-                        verticalArrangement = Arrangement.Bottom,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Notification",
-                            color = colorResource(R.color.broken_white),
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        if(!notificationPermission.status.isGranted){
-                            Button(
-                                onClick = { askNotification(notificationPermission) },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = colorResource(R.color.brown),
-                                )
-
-                            ) {
-                                Text(
-                                    text = "Activate notification",
-                                    color = colorResource(R.color.broken_white),
-                                )
-                            }
-                        }
-                        else{
-                            Text(
-                                text = "Notification activated",
-                                color = colorResource(R.color.broken_white)
-                            )
-                        }
-                    }
-                }
-                Column(
-                    modifier = Modifier.padding(0.dp,0.dp,0.dp,10.dp).fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-
-                ) {
                     Text(
-                        text = "Display",
-                        color = colorResource(R.color.broken_white),
+                        text = "About",
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(14.dp)
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Switch(
-                        checked = switchStateDisplay,
-                        onCheckedChange = {
-                            switchStateDisplay = it
-                            sharedPreferences.edit {
-                                putBoolean("switchStateDisplay", it)
-                                apply()
-                            }
-                        },
-                        thumbContent = if (switchStateDisplay) {
-                            {
-                                Icon(
-                                    imageVector = Icons.Outlined.Check,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(SwitchDefaults.IconSize),
-                                )
-                            }
-                        } else {
-                            {
-                                Icon(
-                                    imageVector = Icons.Outlined.Close,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(SwitchDefaults.IconSize),
-                                )
-                            }
-                        },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = colorResource(R.color.broken_white),
-                            checkedTrackColor = colorResource(R.color.brown),
-                            uncheckedThumbColor = colorResource(R.color.broken_white),
-                            uncheckedTrackColor = colorResource(R.color.purple),
-                        )
-                    )
-                }
-            }
-        }
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-        item {
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = colorResource(R.color.purple),
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 6.dp
-                ), modifier = Modifier
-                    .height(210.dp)
-                    .fillMaxWidth()
-            )
-            {
-                Text(
-                    text = "Actions",
-                    color = colorResource(R.color.broken_white),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(14.dp)
-                )
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-                {
-                    Column(
-                        modifier = Modifier.padding(14.dp),
-                        verticalArrangement = Arrangement.Bottom,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Disconnection",
-                            color = colorResource(R.color.broken_white),
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Button(
-                            onClick = onSignOut,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colorResource(R.color.brown),
-                            )
-
-                        ) {
-                            Text(
-                                text = "Logout",
-                                color = colorResource(R.color.broken_white)
-                            )
-                        }
-                    }
-                    Column(
-                        modifier = Modifier.padding(14.dp),
-                        verticalArrangement = Arrangement.Bottom,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Spacer(modifier = Modifier.height(25.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
                     )
                     {
-                        Text(
-                            text = "Account deletion",
-                            color = colorResource(R.color.broken_white),
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        Spacer(modifier = Modifier.height(5.dp))
                         Button(
-                            onClick = { onAccountDelete() },
+                            onClick = { showDialog = true },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = colorResource(R.color.brown),
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                            )
+
+                        ) {
+                            Text(
+                                text = "Application infos",
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        Button(
+                            onClick = { onAppVersion(context) },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondary,
                             )
                         ) {
                             Text(
-                                text = "Delete",
-                                color = colorResource(R.color.broken_white)
+                                text = "Application version",
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
                 }
             }
         }
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-        item {
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = colorResource(R.color.purple),
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 6.dp
-                ), modifier = Modifier
-                    .height(210.dp)
-                    .fillMaxWidth()
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = {
+                    Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+                        Icon(
+                            imageVector = Icons.Outlined.Info,
+                            contentDescription = null,
+                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = "App Info",
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+
+                },
+                text = {
+                    Text(
+                        text = "This is the app info.",
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                },
+                backgroundColor = MaterialTheme.colorScheme.tertiary,
+                confirmButton = {
+                    Button(
+                        onClick = { showDialog = false },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                        ),
+                        modifier = Modifier.padding(0.dp, 0.dp, 10.dp, 10.dp),
+                    ) {
+                        Text(
+                            text = "Close",
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
             )
-            {
-                Text(
-                    text = "About",
-                    color = colorResource(R.color.broken_white),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(14.dp)
-                )
-                Spacer(modifier = Modifier.height(25.dp))
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-                {
-                    Button(
-                        onClick = { showDialog = true },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(R.color.brown),
-                        )
-
-                    ) {
-                        Text(
-                            text = "Application infos",
-                            color = colorResource(R.color.broken_white)
-                        )
-                    }
-                    Button(
-                        onClick = { onAppVersion(context) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(R.color.brown),
-                        )
-                    ) {
-                        Text(
-                            text = "Application version",
-                            color = colorResource(R.color.broken_white)
-                        )
-                    }
-                }
-            }
         }
     }
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = {
-                Row (horizontalArrangement = Arrangement.SpaceEvenly){
-                    Icon(
-                        imageVector = Icons.Outlined.Info,
-                        contentDescription = null,
-                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        text = "App Info",
-                        color = colorResource(R.color.broken_white),
-                    )
-                }
 
-            },
-            text = {
-                Text(
-                    text = "This is the app info.",
-                    color = colorResource(R.color.broken_white)
-                )
-            },
-            backgroundColor = colorResource(R.color.purple),
-            confirmButton = {
-                Button(
-                    onClick = { showDialog = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(R.color.brown),
-                    ),
-                    modifier = Modifier.padding(0.dp,0.dp,10.dp,10.dp),
-                ) {
-                    Text(
-                        text = "Close",
-                        color = colorResource(R.color.broken_white)
-                    )
-                }
-            }
-        )
-    }
 }

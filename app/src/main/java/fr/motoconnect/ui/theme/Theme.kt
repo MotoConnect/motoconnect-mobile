@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+
 private val DarkColorScheme = darkColorScheme(
     primary = Primary1,
     secondary = Secondary1,
@@ -60,6 +61,23 @@ fun MotoConnectTheme(
             window.statusBarColor = colorScheme.primary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
+    )
+}
+
+@Composable
+fun MotoConnectTheme2(activated: Boolean,content: @Composable () -> Unit){
+
+    val colorScheme = if(activated){
+        LightColorScheme
+    }
+    else{
+        DarkColorScheme
     }
 
     MaterialTheme(
