@@ -80,6 +80,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx:24.10.0")
     implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
     implementation("androidx.compose.ui:ui-android:1.5.4")
+    implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
