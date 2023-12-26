@@ -73,9 +73,8 @@ fun onAccountDelete() {
 fun onAppVersion(context: Context) {
     Toast.makeText(
         context,
-        context.getString(R.string.version_name) + BuildConfig.VERSION_NAME + "\n" + context.getString(
-            R.string.version_code
-        ) + BuildConfig.VERSION_CODE.toString(),
+        context.getString(R.string.version_name) + " : " + BuildConfig.VERSION_NAME + "\n"
+                + context.getString(R.string.version_code) + " : " + BuildConfig.VERSION_CODE.toString(),
         Toast.LENGTH_LONG
     ).show()
 }
@@ -412,12 +411,13 @@ fun ProfileScreen(
                             Spacer(modifier = Modifier.height(5.dp))
                             Button(
                                 onClick = {
-                                    authenticationViewModel.signOut() },
+                                    authenticationViewModel.signOut()
+                                },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = MaterialTheme.colorScheme.secondary,
                                 )
 
-                            ){
+                            ) {
                                 Text(
                                     text = stringResource(id = R.string.sign_out),
                                     color = MaterialTheme.colorScheme.primary
