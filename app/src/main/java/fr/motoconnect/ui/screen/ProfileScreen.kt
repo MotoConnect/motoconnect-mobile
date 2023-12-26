@@ -36,10 +36,8 @@ import fr.motoconnect.R
 import androidx.compose.ui.platform.LocalContext
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -102,7 +100,7 @@ fun askLocation(locationPermission: PermissionState) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ProfileScreen(
@@ -203,7 +201,7 @@ fun ProfileScreen(
                                     textDecoration = TextDecoration.Underline
                                 )
                                 Text(
-                                    text = currentUser.displayName!!,
+                                    text = currentUser.email!!,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontSize = 14.sp,
                                 )
