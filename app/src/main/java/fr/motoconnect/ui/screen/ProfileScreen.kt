@@ -1,7 +1,6 @@
 package fr.motoconnect.ui.screen
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -33,10 +32,10 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +48,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.edit
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -59,15 +57,15 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.firebase.auth.FirebaseAuth
 import firebase.com.protolitewrapper.BuildConfig
 import fr.motoconnect.R
+import fr.motoconnect.ui.store.DisplayStore
 import fr.motoconnect.ui.theme.MotoConnectTheme
 import fr.motoconnect.viewmodel.AuthenticationViewModel
-
-fun getSharedPreferences(context: Context): SharedPreferences {
-    return context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-}
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 fun onAccountDelete() {
-    //TODO
+    //A faire plus tard
 }
 
 fun onAppVersion(context: Context) {
@@ -109,15 +107,9 @@ fun ProfileScreen(
     authenticationViewModel: AuthenticationViewModel
 ) {
     val context = LocalContext.current
-    val sharedPreferences = getSharedPreferences(context)
-    val switchStateDisplay by rememberSaveable {
-        mutableStateOf(
-            sharedPreferences.getBoolean(
-                "switchStateDisplay",
-                false
-            )
-        )
-    }
+    val store = DisplayStore(context)
+    val darkmode = store.getDarkMode.collectAsState(initial =false)
+
     val notificationPermission = rememberPermissionState(
         permission = android.Manifest.permission.POST_NOTIFICATIONS
     )
@@ -127,7 +119,7 @@ fun ProfileScreen(
     val locationPermissionCoarse = rememberPermissionState(
         permission = android.Manifest.permission.ACCESS_COARSE_LOCATION
     )
-    MotoConnectTheme(activated = switchStateDisplay) {
+    MotoConnectTheme(activated = darkmode.value) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -156,7 +148,13 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-                PreferencesCard(locationPermissionCoarse, locationPermission, notificationPermission, sharedPreferences)
+                PreferencesCard(
+                    locationPermissionCoarse,
+                    locationPermission,
+                    notificationPermission,
+                    darkmode.value,
+                    store
+                )
             }
             item {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -174,8 +172,9 @@ fun ProfileScreen(
     }
 
 }
+
 @Composable
-fun ProfileCard(auth: FirebaseAuth){
+fun ProfileCard(auth: FirebaseAuth) {
 
     val currentUser = auth.currentUser
 
@@ -257,15 +256,14 @@ fun ProfileCard(auth: FirebaseAuth){
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PreferencesCard(locationPermissionCoarse: PermissionState, locationPermission: PermissionState, notificationPermission: PermissionState, sharedPreferences: SharedPreferences){
-    var switchStateDisplay by rememberSaveable {
-        mutableStateOf(
-            sharedPreferences.getBoolean(
-                "switchStateDisplay",
-                false
-            )
-        )
-    }
+fun PreferencesCard(
+    locationPermissionCoarse: PermissionState,
+    locationPermission: PermissionState,
+    notificationPermission: PermissionState,
+    darkmode: Boolean,
+    store: DisplayStore
+) {
+
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiary,
@@ -383,15 +381,13 @@ fun PreferencesCard(locationPermissionCoarse: PermissionState, locationPermissio
                 modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 5.dp)
             )
             Switch(
-                checked = switchStateDisplay,
+                checked = darkmode,
                 onCheckedChange = {
-                    switchStateDisplay = it
-                    sharedPreferences.edit {
-                        putBoolean("switchStateDisplay", it)
-                        apply()
+                    CoroutineScope(Dispatchers.IO).launch{
+                        store.setDarkMode(it)
                     }
                 },
-                thumbContent = if (switchStateDisplay) {
+                thumbContent = if (darkmode) {
                     {
                         Icon(
                             imageVector = Icons.Outlined.Check,
@@ -420,7 +416,7 @@ fun PreferencesCard(locationPermissionCoarse: PermissionState, locationPermissio
 }
 
 @Composable
-fun ActionCard(authenticationViewModel: AuthenticationViewModel){
+fun ActionCard(authenticationViewModel: AuthenticationViewModel) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiary,
@@ -502,7 +498,7 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel){
 }
 
 @Composable
-fun AboutCard(context: Context){
+fun AboutCard(context: Context) {
 
     var showDialogAppInfo by remember { mutableStateOf(false) }
 
