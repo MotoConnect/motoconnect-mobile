@@ -1,5 +1,6 @@
 package fr.motoconnect
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -79,8 +80,19 @@ class MainActivity : ComponentActivity() {
 
         val authenticationViewModel = AuthenticationViewModel(auth, db, applicationContext)
 
+        //A adapter avec l'utilisation du datastore
+        val sharedPref = this.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+
+        var customtheme =
+
+                sharedPref.getBoolean(
+                    "switchStateDisplay",
+                    false
+                )
+
+
         setContent {
-            MotoConnectTheme {
+            MotoConnectTheme(activated = true) {
                 MainScreen(
                     auth = auth,
                     authenticationViewModel = authenticationViewModel
