@@ -57,7 +57,7 @@
     <string name="application_version">Application version</string>
     <string name="app_info">This is the app info.</string>
     <string name="close">Close</string>
-    <string name="version_name">"Version Name : "</string>
-    <string name="version_code">"Version Code : "</string>
+    <string name="version_name">"Version Name"</string>
+    <string name="version_code">"Version Code"</string>
     <string name="displayname_textfield_label">Username</string>
 </resources>
