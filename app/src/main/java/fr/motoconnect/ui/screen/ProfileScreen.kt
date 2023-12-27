@@ -108,10 +108,9 @@ fun ProfileScreen(
     auth: FirebaseAuth,
     authenticationViewModel: AuthenticationViewModel
 ) {
-    var showDialogAppInfo by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val sharedPreferences = getSharedPreferences(context)
-    var switchStateDisplay by rememberSaveable {
+    val switchStateDisplay by rememberSaveable {
         mutableStateOf(
             sharedPreferences.getBoolean(
                 "switchStateDisplay",
@@ -119,11 +118,9 @@ fun ProfileScreen(
             )
         )
     }
-    val currentUser = auth.currentUser
     val notificationPermission = rememberPermissionState(
         permission = android.Manifest.permission.POST_NOTIFICATIONS
     )
-    //A adapter pour la localisation
     val locationPermission = rememberPermissionState(
         permission = android.Manifest.permission.ACCESS_FINE_LOCATION
     )
@@ -153,406 +150,452 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-                if (currentUser?.email != null) {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiary,
-                        ),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 6.dp
-                        ), modifier = Modifier
-                            .height(210.dp)
-                            .fillMaxWidth()
-                    )
-                    {
-                        Text(
-                            text = stringResource(R.string.profile),
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.padding(14.dp)
-                        )
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Column(
-                                modifier = Modifier.padding(14.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            )
-                            {
-                                val painter = rememberAsyncImagePainter(
-                                    ImageRequest
-                                        .Builder(LocalContext.current)
-                                        .data(data = "https://media1.woopic.com/api/v1/images/504%2Fsport%2FMedia365-Sport-News%2F2dd%2Fd58%2F4b0da6963a899c6372da2c6170%2Fmotogp-quartararo-n-a-pas-ete-pleinement-convaincu-lors-des-essais-de-valence%7Cfabio-quartararo-motogp-essais-valence-20231128-1024x538.jpg?facedetect=1&quality=85")
-                                        .build()
-                                )
-                                Image(
-                                    painter = painter,
-                                    contentDescription = stringResource(R.string.profile_picture),
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier
-                                        .width(100.dp)
-                                        .height(100.dp)
-                                        .clip(shape = CircleShape)
-                                )
-                            }
-                            Column(
-                                modifier = Modifier.padding(14.dp),
-                                verticalArrangement = Arrangement.Bottom
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.username) + " :",
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontSize = 15.sp,
-                                    textDecoration = TextDecoration.Underline,
-                                    modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
-                                )
-                                Text(
-                                    text = currentUser.email!!,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontSize = 14.sp,
-                                    modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 16.dp)
-                                )
-                                Text(
-                                    text = stringResource(R.string.email_textfield_label) + " :",
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontSize = 15.sp,
-                                    textDecoration = TextDecoration.Underline,
-                                    modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
-                                )
-                                Text(
-                                    text = currentUser.email!!,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontSize = 14.sp,
-                                )
-                            }
-                        }
-                    }
-                }
+                ProfileCard(auth)
             }
             item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary,
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 6.dp
-                    ), modifier = Modifier
-                        .height(210.dp)
-                        .fillMaxWidth()
-                )
-                {
-                    Text(
-                        text = stringResource(R.string.preferences),
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(14.dp)
-                    )
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                    {
-                        Column(
-                            modifier = Modifier.padding(5.dp),
-                            verticalArrangement = Arrangement.Bottom,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = stringResource(R.string.location),
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
-                            )
-                            if (!locationPermission.status.isGranted) {
-                                Button(
-                                    onClick = { askLocation(locationPermission) },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.secondary,
-                                    )
-
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.Authorization),
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            } else {
-                                Text(
-                                    text = stringResource(R.string.location_activated),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                        Column(
-                            modifier = Modifier.padding(5.dp),
-                            verticalArrangement = Arrangement.Bottom,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = stringResource(R.string.notification),
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
-                            )
-                            if (!notificationPermission.status.isGranted) {
-                                Button(
-                                    onClick = { askNotification(notificationPermission) },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.secondary,
-                                    )
-
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.Authorization),
-                                        color = MaterialTheme.colorScheme.primary,
-                                    )
-                                }
-                            } else {
-                                Text(
-                                    text = stringResource(R.string.notification_activated),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                    }
-                    Column(
-                        modifier = Modifier
-                            .padding(0.dp, 5.dp, 0.dp, 10.dp)
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-
-                        ) {
-                        Text(
-                            text = stringResource(R.string.display),
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 5.dp)
-                        )
-                        Switch(
-                            checked = switchStateDisplay,
-                            onCheckedChange = {
-                                switchStateDisplay = it
-                                sharedPreferences.edit {
-                                    putBoolean("switchStateDisplay", it)
-                                    apply()
-                                }
-                            },
-                            thumbContent = if (switchStateDisplay) {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Check,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                }
-                            } else {
-                                {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Close,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
-                                }
-                            },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = MaterialTheme.colorScheme.secondary,
-                                checkedTrackColor = MaterialTheme.colorScheme.secondary,
-                                uncheckedThumbColor = MaterialTheme.colorScheme.primary,
-                                uncheckedTrackColor = MaterialTheme.colorScheme.tertiary,
-                            )
-                        )
-                    }
-                }
+                PreferencesCard(locationPermissionCoarse, locationPermission, notificationPermission, sharedPreferences)
             }
             item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary,
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 6.dp
-                    ), modifier = Modifier
-                        .height(210.dp)
-                        .fillMaxWidth()
-                )
-                {
-                    Text(
-                        text = stringResource(R.string.actions),
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(14.dp)
-                    )
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                    {
-                        Column(
-                            modifier = Modifier.padding(14.dp),
-                            verticalArrangement = Arrangement.Bottom,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.sign_out),
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                            Spacer(modifier = Modifier.height(5.dp))
-                            Button(
-                                onClick = {
-                                    authenticationViewModel.signOut()
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary,
-                                )
-
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.sign_out),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                        Column(
-                            modifier = Modifier.padding(14.dp),
-                            verticalArrangement = Arrangement.Bottom,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        )
-                        {
-                            Text(
-                                text = stringResource(R.string.account_deletion),
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                            Spacer(modifier = Modifier.height(5.dp))
-                            Button(
-                                onClick = { onAccountDelete() },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary,
-                                )
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.delete),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                    }
-                }
+                ActionCard(authenticationViewModel)
             }
             item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary,
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 6.dp
-                    ), modifier = Modifier
-                        .height(210.dp)
-                        .fillMaxWidth()
-                )
-                {
-                    Text(
-                        text = stringResource(R.string.about),
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(14.dp)
-                    )
-                    Spacer(modifier = Modifier.height(25.dp))
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                    {
-                        Button(
-                            onClick = { showDialogAppInfo = true },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                            )
-
-                        ) {
-                            Text(
-                                text = stringResource(R.string.application_infos),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                        Button(
-                            onClick = { onAppVersion(context) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                            )
-                        ) {
-                            Text(
-                                text = stringResource(R.string.application_version),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                }
+                AboutCard(context)
             }
-        }
-        if (showDialogAppInfo) {
-            AlertDialog(
-                onDismissRequest = { showDialogAppInfo = false },
-                title = {
-                    Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-                        Icon(
-                            imageVector = Icons.Outlined.Info,
-                            contentDescription = null,
-                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = stringResource(R.string.application_infos),
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-
-                },
-                text = {
-                    Text(
-                        text = stringResource(R.string.app_info),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                },
-                backgroundColor = MaterialTheme.colorScheme.tertiary,
-                confirmButton = {
-                    Button(
-                        onClick = { showDialogAppInfo = false },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                        ),
-                        modifier = Modifier.padding(0.dp, 0.dp, 10.dp, 10.dp),
-                    ) {
-                        Text(
-                            text = stringResource(R.string.close),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-            )
         }
     }
 
+}
+@Composable
+fun ProfileCard(auth: FirebaseAuth){
+
+    val currentUser = auth.currentUser
+
+    if (currentUser?.email != null) {
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.tertiary,
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 6.dp
+            ), modifier = Modifier
+                .height(210.dp)
+                .fillMaxWidth()
+        )
+        {
+            Text(
+                text = stringResource(R.string.profile),
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(14.dp)
+            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(
+                    modifier = Modifier.padding(14.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                )
+                {
+                    val painter = rememberAsyncImagePainter(
+                        ImageRequest
+                            .Builder(LocalContext.current)
+                            .data(data = "https://media1.woopic.com/api/v1/images/504%2Fsport%2FMedia365-Sport-News%2F2dd%2Fd58%2F4b0da6963a899c6372da2c6170%2Fmotogp-quartararo-n-a-pas-ete-pleinement-convaincu-lors-des-essais-de-valence%7Cfabio-quartararo-motogp-essais-valence-20231128-1024x538.jpg?facedetect=1&quality=85")
+                            .build()
+                    )
+                    Image(
+                        painter = painter,
+                        contentDescription = stringResource(R.string.profile_picture),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .width(100.dp)
+                            .height(100.dp)
+                            .clip(shape = CircleShape)
+                    )
+                }
+                Column(
+                    modifier = Modifier.padding(14.dp),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Text(
+                        text = stringResource(R.string.username) + " :",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 15.sp,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
+                    )
+                    Text(
+                        text = currentUser.displayName!!,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 16.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.email_textfield_label) + " :",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 15.sp,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
+                    )
+                    Text(
+                        text = currentUser.email!!,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 14.sp,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun PreferencesCard(locationPermissionCoarse: PermissionState, locationPermission: PermissionState, notificationPermission: PermissionState, sharedPreferences: SharedPreferences){
+    var switchStateDisplay by rememberSaveable {
+        mutableStateOf(
+            sharedPreferences.getBoolean(
+                "switchStateDisplay",
+                false
+            )
+        )
+    }
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiary,
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ), modifier = Modifier
+            .height(210.dp)
+            .fillMaxWidth()
+    )
+    {
+        Text(
+            text = stringResource(R.string.preferences),
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(14.dp)
+        )
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        {
+            Column(
+                modifier = Modifier.padding(5.dp),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.location),
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
+                )
+                if (locationPermissionCoarse.status.isGranted && !locationPermission.status.isGranted) {
+                    Button(
+                        onClick = { askLocation(locationPermission) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                        )
+
+                    ) {
+                        Text(
+                            text = stringResource(R.string.coarse_location_warning),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                } else if (!locationPermission.status.isGranted) {
+                    Button(
+                        onClick = { askLocation(locationPermission) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.Authorization),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.location_activated),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier.padding(5.dp),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.notification),
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
+                )
+                if (!notificationPermission.status.isGranted) {
+                    Button(
+                        onClick = { askNotification(notificationPermission) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                        )
+
+                    ) {
+                        Text(
+                            text = stringResource(R.string.Authorization),
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.notification_activated),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        }
+        Column(
+            modifier = Modifier
+                .padding(0.dp, 5.dp, 0.dp, 10.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+
+            ) {
+            Text(
+                text = stringResource(R.string.display),
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 5.dp)
+            )
+            Switch(
+                checked = switchStateDisplay,
+                onCheckedChange = {
+                    switchStateDisplay = it
+                    sharedPreferences.edit {
+                        putBoolean("switchStateDisplay", it)
+                        apply()
+                    }
+                },
+                thumbContent = if (switchStateDisplay) {
+                    {
+                        Icon(
+                            imageVector = Icons.Outlined.Check,
+                            contentDescription = null,
+                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                        )
+                    }
+                } else {
+                    {
+                        Icon(
+                            imageVector = Icons.Outlined.Close,
+                            contentDescription = null,
+                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                        )
+                    }
+                },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.secondary,
+                    checkedTrackColor = MaterialTheme.colorScheme.secondary,
+                    uncheckedThumbColor = MaterialTheme.colorScheme.primary,
+                    uncheckedTrackColor = MaterialTheme.colorScheme.tertiary,
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun ActionCard(authenticationViewModel: AuthenticationViewModel){
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiary,
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ), modifier = Modifier
+            .height(210.dp)
+            .fillMaxWidth()
+    )
+    {
+        Text(
+            text = stringResource(R.string.actions),
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(14.dp)
+        )
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        {
+            Column(
+                modifier = Modifier.padding(14.dp),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(id = R.string.sign_out),
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                Button(
+                    onClick = {
+                        authenticationViewModel.signOut()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                    )
+
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.sign_out),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier.padding(14.dp),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
+            {
+                Text(
+                    text = stringResource(R.string.account_deletion),
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                Button(
+                    onClick = { onAccountDelete() },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.delete),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AboutCard(context: Context){
+
+    var showDialogAppInfo by remember { mutableStateOf(false) }
+
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiary,
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ), modifier = Modifier
+            .height(210.dp)
+            .fillMaxWidth()
+    )
+    {
+        Text(
+            text = stringResource(R.string.about),
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(14.dp)
+        )
+        Spacer(modifier = Modifier.height(25.dp))
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+        {
+            Button(
+                onClick = { showDialogAppInfo = true },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                )
+
+            ) {
+                Text(
+                    text = stringResource(R.string.application_infos),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Button(
+                onClick = { onAppVersion(context) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                )
+            ) {
+                Text(
+                    text = stringResource(R.string.application_version),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    }
+    if (showDialogAppInfo) {
+        AlertDialog(
+            onDismissRequest = { showDialogAppInfo = false },
+            title = {
+                Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = null,
+                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = stringResource(R.string.application_infos),
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+
+            },
+            text = {
+                Text(
+                    text = stringResource(R.string.app_info),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            },
+            backgroundColor = MaterialTheme.colorScheme.tertiary,
+            confirmButton = {
+                Button(
+                    onClick = { showDialogAppInfo = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                    ),
+                    modifier = Modifier.padding(0.dp, 0.dp, 10.dp, 10.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.close),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        )
+    }
 }

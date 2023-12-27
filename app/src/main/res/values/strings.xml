@@ -60,4 +60,5 @@
     <string name="version_name">"Version Name"</string>
     <string name="version_code">"Version Code"</string>
     <string name="displayname_textfield_label">Username</string>
+    <string name="coarse_location_warning">Activate fine location</string>
 </resources>
