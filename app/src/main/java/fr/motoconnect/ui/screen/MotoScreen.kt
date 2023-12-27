@@ -119,7 +119,7 @@ fun MotoFluidsComponent(
     ) {
         Column {
             Text(
-                text = "Entretien",
+                text = stringResource(R.string.moto_maintenance),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.tertiary,
@@ -132,7 +132,7 @@ fun MotoFluidsComponent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Engine oil",
+                    text = stringResource(R.string.moto_engine_oil),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.tertiary,
@@ -150,7 +150,7 @@ fun MotoFluidsComponent(
                         contentColor = MaterialTheme.colorScheme.primary
                     )
                 ){
-                    Text(text = "Reset")
+                    Text(text = stringResource(R.string.moto_reset))
                 }
             }
             Row(
@@ -160,7 +160,7 @@ fun MotoFluidsComponent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Break fluid",
+                    text = stringResource(R.string.moto_break_fluid),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.tertiary,
@@ -178,7 +178,7 @@ fun MotoFluidsComponent(
                         contentColor = MaterialTheme.colorScheme.primary
                     )
                 ){
-                    Text(text = "Reset")
+                    Text(text = stringResource(R.string.moto_reset))
                 }
             }
             Row(
@@ -188,7 +188,7 @@ fun MotoFluidsComponent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Chain greasing",
+                    text = stringResource(R.string.moto_chain_greasing),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.tertiary,
@@ -206,7 +206,7 @@ fun MotoFluidsComponent(
                         contentColor = MaterialTheme.colorScheme.primary
                     )
                 ){
-                    Text(text = "Reset")
+                    Text(text = stringResource(R.string.moto_reset))
                 }
             }
         }
@@ -227,7 +227,7 @@ fun MotoJourneysComponent(
     ) {
         Column {
             Text(
-                text = "Journeys",
+                text = stringResource(R.string.moto_journeys),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.tertiary,
@@ -236,7 +236,7 @@ fun MotoJourneysComponent(
 
             Row {
                 Text(
-                    text = "Nombre de trajets : ",
+                    text = stringResource(R.string.moto_number_of_journeys),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.tertiary
@@ -249,7 +249,7 @@ fun MotoJourneysComponent(
             }
             Row {
                 Text(
-                    text = "Distance totale : ",
+                    text = stringResource(R.string.moto_total_distance),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.tertiary
