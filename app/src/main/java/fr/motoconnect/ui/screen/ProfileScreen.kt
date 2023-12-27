@@ -73,7 +73,9 @@ fun onAccountDelete() {
 fun onAppVersion(context: Context) {
     Toast.makeText(
         context,
-        "Version Name : " + BuildConfig.VERSION_NAME + "\n" + "Version Code : " + BuildConfig.VERSION_CODE.toString(),
+        context.getString(R.string.version_name) + BuildConfig.VERSION_NAME + "\n" + context.getString(
+            R.string.version_code
+        ) + BuildConfig.VERSION_CODE.toString(),
         Toast.LENGTH_LONG
     ).show()
 }
@@ -107,7 +109,7 @@ fun ProfileScreen(
     auth: FirebaseAuth,
     authenticationViewModel: AuthenticationViewModel
 ) {
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialogAppInfo by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val sharedPreferences = getSharedPreferences(context)
     var switchStateDisplay by rememberSaveable {
@@ -136,7 +138,7 @@ fun ProfileScreen(
         ) {
             item {
                 Text(
-                    text = "Settings",
+                    text = stringResource(R.string.settings),
                     color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -162,7 +164,7 @@ fun ProfileScreen(
                     )
                     {
                         Text(
-                            text = "Profile",
+                            text = stringResource(R.string.profile),
                             color = MaterialTheme.colorScheme.primary,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -182,7 +184,7 @@ fun ProfileScreen(
                                 )
                                 Image(
                                     painter = painter,
-                                    contentDescription = "Profile picture",
+                                    contentDescription = stringResource(R.string.profile_picture),
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
                                         .width(100.dp)
@@ -195,21 +197,24 @@ fun ProfileScreen(
                                 verticalArrangement = Arrangement.Bottom
                             ) {
                                 Text(
-                                    text = "Username :",
+                                    text = stringResource(R.string.username) + " :",
                                     color = MaterialTheme.colorScheme.primary,
                                     fontSize = 15.sp,
-                                    textDecoration = TextDecoration.Underline
+                                    textDecoration = TextDecoration.Underline,
+                                    modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
                                 )
                                 Text(
                                     text = currentUser.email!!,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontSize = 14.sp,
+                                    modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 16.dp)
                                 )
                                 Text(
-                                    text = "Email :",
+                                    text = stringResource(R.string.email_textfield_label) + " :",
                                     color = MaterialTheme.colorScheme.primary,
                                     fontSize = 15.sp,
-                                    textDecoration = TextDecoration.Underline
+                                    textDecoration = TextDecoration.Underline,
+                                    modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
                                 )
                                 Text(
                                     text = currentUser.email!!,
@@ -237,7 +242,7 @@ fun ProfileScreen(
                 )
                 {
                     Text(
-                        text = "Preferences",
+                        text = stringResource(R.string.preferences),
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -251,15 +256,16 @@ fun ProfileScreen(
                     )
                     {
                         Column(
-                            modifier = Modifier.padding(10.dp),
+                            modifier = Modifier.padding(5.dp),
                             verticalArrangement = Arrangement.Bottom,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Location",
+                                text = stringResource(R.string.location),
                                 color = MaterialTheme.colorScheme.primary,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
                             )
                             if (!locationPermission.status.isGranted) {
                                 Button(
@@ -270,27 +276,28 @@ fun ProfileScreen(
 
                                 ) {
                                     Text(
-                                        text = "Activate location",
+                                        text = stringResource(R.string.Authorization),
                                         color = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             } else {
                                 Text(
-                                    text = "Location activated",
+                                    text = stringResource(R.string.location_activated),
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
                         }
                         Column(
-                            modifier = Modifier.padding(10.dp),
+                            modifier = Modifier.padding(5.dp),
                             verticalArrangement = Arrangement.Bottom,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Notification",
+                                text = stringResource(R.string.notification),
                                 color = MaterialTheme.colorScheme.primary,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
                             )
                             if (!notificationPermission.status.isGranted) {
                                 Button(
@@ -301,13 +308,13 @@ fun ProfileScreen(
 
                                 ) {
                                     Text(
-                                        text = "Activate notification",
+                                        text = stringResource(R.string.Authorization),
                                         color = MaterialTheme.colorScheme.primary,
                                     )
                                 }
                             } else {
                                 Text(
-                                    text = "Notification activated",
+                                    text = stringResource(R.string.notification_activated),
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -315,18 +322,18 @@ fun ProfileScreen(
                     }
                     Column(
                         modifier = Modifier
-                            .padding(0.dp, 0.dp, 0.dp, 10.dp)
+                            .padding(0.dp, 5.dp, 0.dp, 10.dp)
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
 
                         ) {
                         Text(
-                            text = "Display",
+                            text = stringResource(R.string.display),
                             color = MaterialTheme.colorScheme.primary,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 5.dp)
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
                         Switch(
                             checked = switchStateDisplay,
                             onCheckedChange = {
@@ -379,7 +386,7 @@ fun ProfileScreen(
                 )
                 {
                     Text(
-                        text = "Actions",
+                        text = stringResource(R.string.actions),
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -397,7 +404,7 @@ fun ProfileScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Disconnection",
+                                text = stringResource(id = R.string.sign_out),
                                 color = MaterialTheme.colorScheme.primary,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -424,7 +431,7 @@ fun ProfileScreen(
                         )
                         {
                             Text(
-                                text = "Account deletion",
+                                text = stringResource(R.string.account_deletion),
                                 color = MaterialTheme.colorScheme.primary,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -437,7 +444,7 @@ fun ProfileScreen(
                                 )
                             ) {
                                 Text(
-                                    text = "Delete",
+                                    text = stringResource(R.string.delete),
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -461,7 +468,7 @@ fun ProfileScreen(
                 )
                 {
                     Text(
-                        text = "About",
+                        text = stringResource(R.string.about),
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -476,14 +483,14 @@ fun ProfileScreen(
                     )
                     {
                         Button(
-                            onClick = { showDialog = true },
+                            onClick = { showDialogAppInfo = true },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.secondary,
                             )
 
                         ) {
                             Text(
-                                text = "Application infos",
+                                text = stringResource(R.string.application_infos),
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -494,7 +501,7 @@ fun ProfileScreen(
                             )
                         ) {
                             Text(
-                                text = "Application version",
+                                text = stringResource(R.string.application_version),
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -502,9 +509,9 @@ fun ProfileScreen(
                 }
             }
         }
-        if (showDialog) {
+        if (showDialogAppInfo) {
             AlertDialog(
-                onDismissRequest = { showDialog = false },
+                onDismissRequest = { showDialogAppInfo = false },
                 title = {
                     Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                         Icon(
@@ -514,7 +521,7 @@ fun ProfileScreen(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "App Info",
+                            text = stringResource(R.string.application_infos),
                             color = MaterialTheme.colorScheme.primary,
                         )
                     }
@@ -522,21 +529,21 @@ fun ProfileScreen(
                 },
                 text = {
                     Text(
-                        text = "This is the app info.",
+                        text = stringResource(R.string.app_info),
                         color = MaterialTheme.colorScheme.primary
                     )
                 },
                 backgroundColor = MaterialTheme.colorScheme.tertiary,
                 confirmButton = {
                     Button(
-                        onClick = { showDialog = false },
+                        onClick = { showDialogAppInfo = false },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                         ),
                         modifier = Modifier.padding(0.dp, 0.dp, 10.dp, 10.dp),
                     ) {
                         Text(
-                            text = "Close",
+                            text = stringResource(R.string.close),
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
