@@ -127,6 +127,9 @@ fun ProfileScreen(
     val locationPermission = rememberPermissionState(
         permission = android.Manifest.permission.ACCESS_FINE_LOCATION
     )
+    val locationPermissionCoarse = rememberPermissionState(
+        permission = android.Manifest.permission.ACCESS_COARSE_LOCATION
+    )
     MotoConnectTheme(activated = switchStateDisplay) {
         LazyColumn(
             modifier = Modifier
