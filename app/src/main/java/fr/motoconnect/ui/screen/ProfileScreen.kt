@@ -142,7 +142,7 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-                ProfileCard(auth)
+                ProfileCard(auth,authenticationViewModel)
             }
             item {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -174,9 +174,11 @@ fun ProfileScreen(
 }
 
 @Composable
-fun ProfileCard(auth: FirebaseAuth) {
+fun ProfileCard(auth: FirebaseAuth,authenticationViewModel: AuthenticationViewModel) {
 
     val currentUser = auth.currentUser
+
+    val authUiState by authenticationViewModel.authUiState.collectAsState()
 
     if (currentUser?.email != null) {
         Card(
@@ -231,7 +233,7 @@ fun ProfileCard(auth: FirebaseAuth) {
                         modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
                     )
                     Text(
-                        text = currentUser.displayName!!,
+                        text = authUiState.user?.displayName.toString(),
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 14.sp,
                         modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 16.dp)
