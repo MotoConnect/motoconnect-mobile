@@ -380,39 +380,44 @@ fun PreferencesCard(
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 5.dp)
             )
-            Switch(
-                checked = darkmode,
-                onCheckedChange = {
-                    CoroutineScope(Dispatchers.IO).launch{
-                        store.setDarkMode(it)
-                    }
-                },
-                thumbContent = if (darkmode) {
-                    {
-                        Icon(
-                            imageVector = Icons.Outlined.Check,
-                            contentDescription = null,
-                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                        )
-                    }
-                } else {
-                    {
-                        Icon(
-                            imageVector = Icons.Outlined.Close,
-                            contentDescription = null,
-                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                        )
-                    }
-                },
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = MaterialTheme.colorScheme.secondary,
-                    checkedTrackColor = MaterialTheme.colorScheme.secondary,
-                    uncheckedThumbColor = MaterialTheme.colorScheme.primary,
-                    uncheckedTrackColor = MaterialTheme.colorScheme.tertiary,
-                )
-            )
+            SwitchLogic(darkmode, store)
         }
     }
+}
+
+@Composable
+fun SwitchLogic(darkmode: Boolean, store: DisplayStore){
+    Switch(
+        checked = darkmode,
+        onCheckedChange = {
+            CoroutineScope(Dispatchers.IO).launch{
+                store.setDarkMode(it)
+            }
+        },
+        thumbContent = if (darkmode) {
+            {
+                Icon(
+                    imageVector = Icons.Outlined.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                )
+            }
+        } else {
+            {
+                Icon(
+                    imageVector = Icons.Outlined.Close,
+                    contentDescription = null,
+                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                )
+            }
+        },
+        colors = SwitchDefaults.colors(
+            checkedThumbColor = MaterialTheme.colorScheme.secondary,
+            checkedTrackColor = MaterialTheme.colorScheme.secondary,
+            uncheckedThumbColor = MaterialTheme.colorScheme.primary,
+            uncheckedTrackColor = MaterialTheme.colorScheme.tertiary,
+        )
+    )
 }
 
 @Composable
