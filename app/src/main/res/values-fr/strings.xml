@@ -52,8 +52,8 @@
     <string name="application_version">Version</string>
     <string name="app_info">Voici les informations sur l\'application</string>
     <string name="close">Fermer</string>
-    <string name="version_name">Nom de la version :</string>
-    <string name="version_code">Code de la version :</string>
+    <string name="version_name">Nom de la version</string>
+    <string name="version_code">Code de la version</string>
     <string name="displayname_textfield_label">Nom d\'utilisateur</string>
     <string name="coarse_location_warning">Activer position exacte</string>
 </resources>
