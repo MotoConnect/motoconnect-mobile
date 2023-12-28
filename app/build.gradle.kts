@@ -19,6 +19,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "WEATHER_API_KEY", "\"${System.getenv("WEATHER_API_KEY")}\"")
     }
 
     buildTypes {
@@ -61,10 +63,6 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.maps.android:maps-compose:2.11.4")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
-    implementation("androidx.compose.material:material:1.5.4")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.7.6")
-    implementation("androidx.navigation:navigation-compose:2.7.6")
-    implementation("androidx.navigation:navigation-common-ktx:2.7.6")
     implementation("androidx.compose.material:material:1.5.4")
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.6")
     implementation("androidx.navigation:navigation-compose:2.7.6")
