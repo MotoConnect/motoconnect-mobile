@@ -42,14 +42,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -78,24 +77,24 @@ fun onAppVersion(context: Context) {
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-fun askNotification(notificationPermission: PermissionState) {
+fun askNotification(notificationPermission: PermissionState,context: Context) {
     if (!notificationPermission.status.isGranted) {
-        Log.d("NOTIF", "Demande les notif")
+        Log.d("NOTIF", context.getString(R.string.AskNotificiation))
         notificationPermission.launchPermissionRequest()
 
     } else {
-        Log.d("NOTIF", "A accepté les notif")
+        Log.d("NOTIF", context.getString(R.string.AcceptedNotification))
     }
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-fun askLocation(locationPermission: PermissionState) {
+fun askLocation(locationPermission: PermissionState,context: Context) {
     if (!locationPermission.status.isGranted) {
-        Log.d("NOTIF", "Demande la localisation")
+        Log.d("NOTIF", context.getString(R.string.askLocation))
         locationPermission.launchPermissionRequest()
 
     } else {
-        Log.d("NOTIF", "A accepté la localisation")
+        Log.d("NOTIF", context.getString(R.string.acceptedLocation))
     }
 }
 
@@ -153,7 +152,8 @@ fun ProfileScreen(
                     locationPermission,
                     notificationPermission,
                     darkmode.value,
-                    store
+                    store,
+                    context
                 )
             }
             item {
@@ -205,14 +205,8 @@ fun ProfileCard(auth: FirebaseAuth,authenticationViewModel: AuthenticationViewMo
                     horizontalAlignment = Alignment.CenterHorizontally
                 )
                 {
-                    val painter = rememberAsyncImagePainter(
-                        ImageRequest
-                            .Builder(LocalContext.current)
-                            .data(data = "https://media1.woopic.com/api/v1/images/504%2Fsport%2FMedia365-Sport-News%2F2dd%2Fd58%2F4b0da6963a899c6372da2c6170%2Fmotogp-quartararo-n-a-pas-ete-pleinement-convaincu-lors-des-essais-de-valence%7Cfabio-quartararo-motogp-essais-valence-20231128-1024x538.jpg?facedetect=1&quality=85")
-                            .build()
-                    )
                     Image(
-                        painter = painter,
+                        painter = painterResource(id = R.drawable.moto),
                         contentDescription = stringResource(R.string.profile_picture),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -263,7 +257,8 @@ fun PreferencesCard(
     locationPermission: PermissionState,
     notificationPermission: PermissionState,
     darkmode: Boolean,
-    store: DisplayStore
+    store: DisplayStore,
+    context: Context
 ) {
 
     Card(
@@ -305,7 +300,7 @@ fun PreferencesCard(
                 )
                 if (locationPermissionCoarse.status.isGranted && !locationPermission.status.isGranted) {
                     Button(
-                        onClick = { askLocation(locationPermission) },
+                        onClick = { askLocation(locationPermission, context) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                         )
@@ -318,7 +313,7 @@ fun PreferencesCard(
                     }
                 } else if (!locationPermission.status.isGranted) {
                     Button(
-                        onClick = { askLocation(locationPermission) },
+                        onClick = { askLocation(locationPermission, context) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                         )
@@ -349,7 +344,7 @@ fun PreferencesCard(
                 )
                 if (!notificationPermission.status.isGranted) {
                     Button(
-                        onClick = { askNotification(notificationPermission) },
+                        onClick = { askNotification(notificationPermission, context) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                         )

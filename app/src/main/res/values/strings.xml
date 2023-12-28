@@ -61,4 +61,8 @@
     <string name="version_code">"Version Code"</string>
     <string name="displayname_textfield_label">Username</string>
     <string name="coarse_location_warning">Activate fine location</string>
+    <string name="AskNotificiation">Asking for notifications</string>
+    <string name="AcceptedNotification">Accepted the notifications</string>
+    <string name="askLocation">Asking for location</string>
+    <string name="acceptedLocation">Has accepted location</string>
 </resources>

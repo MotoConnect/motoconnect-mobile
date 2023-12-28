@@ -56,4 +56,8 @@
     <string name="version_code">Code de la version</string>
     <string name="displayname_textfield_label">Nom d\'utilisateur</string>
     <string name="coarse_location_warning">Activer position exacte</string>
+    <string name="AskNotificiation">Demande les notifications</string>
+    <string name="AcceptedNotification">A accepté les notifications</string>
+    <string name="askLocation">Demande la position</string>
+    <string name="acceptedLocation">A accepté la position</string>
 </resources>
