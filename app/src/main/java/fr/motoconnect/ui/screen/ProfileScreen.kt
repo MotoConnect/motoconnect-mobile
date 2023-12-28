@@ -65,6 +65,7 @@ import kotlinx.coroutines.launch
 
 fun onAccountDelete() {
     //A faire plus tard
+    Log.d("NOTIF", "ACCOUNT DELETE")
 }
 
 fun onAppVersion(context: Context) {
