@@ -1,4 +1,4 @@
-package fr.motoconnect.ui.screen
+package fr.motoconnect.ui.screen.journey
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.google.firebase.Timestamp
 import fr.motoconnect.R
 import fr.motoconnect.data.model.JourneyObject
@@ -34,7 +35,9 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun JourneysScreen() {
+fun JourneysScreen(
+    navController: NavController,
+) {
 
     val journeyViewModel: JourneyViewModel = viewModel()
     val journeyUIState = journeyViewModel.journeyUiState.collectAsState()
@@ -77,7 +80,10 @@ fun JourneysScreen() {
                     Loading()
                 }
             } else {
-                JourneyListComponent(journeys = journeyUIState.value.journeys)
+                JourneyListComponent(
+                    journeys = journeyUIState.value.journeys,
+                    navController = navController
+                )
             }
         }
     }
@@ -87,6 +93,7 @@ fun JourneysScreen() {
 @Composable
 fun JourneyListComponent(
     journeys: List<JourneyObject> = emptyList(),
+    navController: NavController,
 ) {
     Column(
         modifier = Modifier
@@ -103,7 +110,9 @@ fun JourneyListComponent(
             )
         } else {
             for (journey in journeys) {
-                JourneyCard(journey)
+                JourneyCard(journey, onClickSeeMore = {
+                    navController.navigate("journeyDetails/"+ journey.id)
+                })
             }
         }
     }
@@ -111,7 +120,8 @@ fun JourneyListComponent(
 
 @Composable
 fun JourneyCard(
-    journeyObject: JourneyObject
+    journeyObject: JourneyObject,
+    onClickSeeMore: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -148,6 +158,7 @@ fun JourneyCard(
                 contentColor = MaterialTheme.colorScheme.tertiary,
             ),
             onClick = {
+                onClickSeeMore()
             }
         ) {
             Text(stringResource(R.string.see_more))
