@@ -134,7 +134,7 @@ fun JourneyCard(
                 .padding(0.dp, 0.dp, 16.dp, 0.dp),
         ) {
             Text(
-                TimestampUtils().toDateString(journeyObject.startDateTime!!),
+                TimestampUtils().toDateTimeString(journeyObject.startDateTime!!),
                 color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
             )

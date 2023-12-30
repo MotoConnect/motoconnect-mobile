@@ -1,8 +1,10 @@
 package fr.motoconnect.ui.screen.journey
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -21,6 +24,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -29,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,7 +43,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -71,8 +75,6 @@ import fr.motoconnect.viewmodel.JourneyPlayerState
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
 
 @Composable
 fun JourneyDetailsScreen(
@@ -82,23 +84,44 @@ fun JourneyDetailsScreen(
 
     val journeyDetailsViewModel: JourneyDetailsViewModel = viewModel()
     val journeyDetailsUIState by journeyDetailsViewModel.journeyDetailsUiState.collectAsState()
+    var expanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LaunchedEffect(journeyId) {
         journeyDetailsViewModel.getJourney(journeyId = journeyId!!)
     }
 
+    val contentResolver = context.contentResolver
+
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/gpx+xml")) { selectedUri ->
+            if (selectedUri != null) {
+                contentResolver.openOutputStream(selectedUri)?.use {
+                    val bytes = journeyDetailsViewModel.convertGpxAndReturnString().toByteArray()
+                    it.write(bytes)
+                }
+            } else {
+                Log.d("GenerateGpx", "Uri is null")
+            }
+        }
     Scaffold(
         topBar = {
             TopAppBar(
                 backgroundColor = MaterialTheme.colorScheme.primary,
                 title = {
-                    when {
-                        journeyDetailsUIState.journey == null -> {
+                    when (journeyDetailsUIState.journey) {
+                        null -> {
                             Text(text = stringResource(R.string.journey_details))
                         }
 
                         else -> {
-                            Text(text = TimestampUtils().toDateString(journeyDetailsUIState.journey?.startDateTime!!))
+                            Text(
+                                text = stringResource(
+                                    R.string.trajet_du, TimestampUtils().toDateString(
+                                        journeyDetailsUIState.journey?.startDateTime!!
+                                    )
+                                ),
+                            )
                         }
                     }
                 },
@@ -113,11 +136,44 @@ fun JourneyDetailsScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { expanded = true }) {
                         Icon(
                             imageVector = Icons.Filled.MoreVert,
                             contentDescription = null,
                         )
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary)
+                            .clip(RoundedCornerShape(10))
+                    ) {
+                        DropdownMenuItem(
+                            onClick = {
+                                expanded = false
+                                launcher.launch(
+                                    "motoConnect-${
+                                        TimestampUtils().toDateTimeString(
+                                            journeyDetailsUIState.journey?.startDateTime!!
+                                        )
+                                    }.gpx"
+                                )
+                            },
+                        ) {
+                            Text(
+                                text = stringResource(R.string.export_as_gpx),
+                                color = MaterialTheme.colorScheme.tertiary,
+                            )
+                        }
+                        DropdownMenuItem(
+                            onClick = { expanded = false }
+                        ) {
+                            Text(
+                                text = stringResource(R.string.cancel),
+                                color = MaterialTheme.colorScheme.tertiary,
+                            )
+                        }
                     }
                 }
             )
@@ -128,6 +184,7 @@ fun JourneyDetailsScreen(
                 .padding(it)
                 .fillMaxSize(),
         ) {
+
 
             when {
 
@@ -246,7 +303,7 @@ fun PointInfoComponent(
 ) {
     Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(20))
+            .clip(RoundedCornerShape(30))
             .background(MaterialTheme.colorScheme.tertiary)
             .width(200.dp)
             .padding(20.dp),
@@ -298,29 +355,39 @@ fun SliderJourneyComponent(
 
     Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(60))
+            .clip(RoundedCornerShape(30))
             .background(MaterialTheme.colorScheme.tertiary)
             .padding(16.dp, 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Image(
-            painter = if (journeyDetailsUIState.playerState == JourneyPlayerState.PLAYING)
-                painterResource(id = R.drawable.baseline_pause_24)
-            else
-                painterResource(id = R.drawable.baseline_play_arrow_24),
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-            contentDescription = null,
-            modifier = Modifier.clickable {
+        IconButton(
+            onClick = {
                 togglePlayJourney(
                     journeyDetailsUIState.journey!!,
                     journeyDetailsViewModel,
                 )
+            },
+            modifier = Modifier
+                .background(Color(0xFF343333), RoundedCornerShape(50))
+        ) {
+            if (journeyDetailsUIState.playerState == JourneyPlayerState.PLAYING) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_pause_24),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            } else {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_play_arrow_24),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
             }
-        )
+        }
         Text(
             color = MaterialTheme.colorScheme.primary,
-            text = timeStampToTime(journeyDetailsUIState.currentPoint?.time?.seconds!!),
+            text = TimestampUtils().toTime(journeyDetailsUIState.currentPoint?.time?.seconds!!),
             fontSize = 18.sp,
         )
 
@@ -415,23 +482,24 @@ private fun getColorBasedOnSpeed(speed: Long): Color {
 
 }
 
-private fun timeStampToTime(timeStamp: Long): String {
-    val date = Date(timeStamp * 1000L)
-    val sdf = SimpleDateFormat("HH:mm")
-    return sdf.format(date)
-}
 
 private fun togglePlayJourney(
     journey: JourneyObject,
     journeyDetailsViewModel: JourneyDetailsViewModel,
 ) {
-    if (journeyDetailsViewModel.journeyDetailsUiState.value.playerState == JourneyPlayerState.PLAYING) {
-        journeyDetailsViewModel.setPlayerState(JourneyPlayerState.PAUSED)
-    } else if (journeyDetailsViewModel.journeyDetailsUiState.value.playerState == JourneyPlayerState.STOPPED) {
-        journeyDetailsViewModel.setPlayerState(JourneyPlayerState.PLAYING)
-        playJourney(journey, journeyDetailsViewModel)
-    } else {
-        journeyDetailsViewModel.setPlayerState(JourneyPlayerState.PLAYING)
+    when (journeyDetailsViewModel.journeyDetailsUiState.value.playerState) {
+        JourneyPlayerState.PLAYING -> {
+            journeyDetailsViewModel.setPlayerState(JourneyPlayerState.PAUSED)
+        }
+
+        JourneyPlayerState.STOPPED -> {
+            journeyDetailsViewModel.setPlayerState(JourneyPlayerState.PLAYING)
+            playJourney(journey, journeyDetailsViewModel)
+        }
+
+        else -> {
+            journeyDetailsViewModel.setPlayerState(JourneyPlayerState.PLAYING)
+        }
     }
 }
 

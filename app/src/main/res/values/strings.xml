@@ -72,4 +72,7 @@
     <string name="see_more">See more</string>
     <string name="journey_details">Journey details</string>
     <string name="journey_not_found">Journey not found</string>
+    <string name="cancel">Cancel</string>
+    <string name="export_as_gpx">Export as GPX</string>
+    <string name="trajet_du">Journey of %1$s</string>
 </resources>

@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 else -> {
-                    Log.i(TAG, "Location permission denied")
+                    Log.i(TAG, "Some permissions denied")
                 }
             }
         }
@@ -72,9 +72,10 @@ class MainActivity : ComponentActivity() {
         locationPermissionRequest.launch(
             arrayOf(
                 android.Manifest.permission.ACCESS_FINE_LOCATION,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
             )
         )
+
         val auth = FirebaseAuth.getInstance()
         val db = Firebase.firestore
 
