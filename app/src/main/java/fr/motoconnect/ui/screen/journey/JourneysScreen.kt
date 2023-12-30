@@ -28,7 +28,7 @@ import androidx.navigation.NavController
 import fr.motoconnect.R
 import fr.motoconnect.data.model.JourneyObject
 import fr.motoconnect.ui.component.Loading
-import fr.motoconnect.ui.utils.TimestampUtils
+import fr.motoconnect.data.utils.TimestampUtils
 import fr.motoconnect.viewmodel.JourneyViewModel
 
 @Composable

@@ -14,7 +14,7 @@ import fr.motoconnect.ui.screen.HomeScreen
 import fr.motoconnect.ui.screen.journey.JourneysScreen
 import fr.motoconnect.ui.screen.MotoScreen
 import fr.motoconnect.ui.screen.ProfileScreen
-import fr.motoconnect.ui.screen.journey.JourneyDetailsScreen
+import fr.motoconnect.ui.screen.journey.journeyDetails.JourneyDetailsScreen
 import fr.motoconnect.viewmodel.AuthenticationViewModel
 import fr.motoconnect.viewmodel.MapViewModel
 

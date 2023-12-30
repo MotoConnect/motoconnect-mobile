@@ -2,15 +2,15 @@ package fr.motoconnect.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import fr.motoconnect.data.model.JourneyObject
+import fr.motoconnect.data.model.JourneyPlayerState
 import fr.motoconnect.data.model.PointObject
-import fr.motoconnect.ui.utils.TimestampUtils
+import fr.motoconnect.viewmodel.uiState.JourneyDetailsUIState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -18,13 +18,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.tasks.await
-import java.time.Instant
-import kotlin.random.Random
 
 class JourneyDetailsViewModel : ViewModel() {
 
     val TAG = "JourneyDetailsViewModel"
-
 
     private val _journeyDetailsUiState = MutableStateFlow(JourneyDetailsUIState())
     val journeyDetailsUiState: StateFlow<JourneyDetailsUIState> =
@@ -32,45 +29,6 @@ class JourneyDetailsViewModel : ViewModel() {
 
     val db = Firebase.firestore
     val auth = Firebase.auth
-
-    fun addJourney() {
-        val points = listOf(
-            LatLng(49.8429023, 3.2934764),
-            LatLng(49.8437271, 3.2920876),
-            LatLng(49.8423261, 3.2944577),
-            LatLng(49.8418082, 3.2953073),
-            LatLng(49.8414761, 3.2959725),
-            LatLng(49.8409571, 3.2969917),
-            LatLng(49.8403275, 3.298204),
-            LatLng(49.8397348, 3.2993252),
-            LatLng(49.839244, 3.3000863),
-            LatLng(49.839563, 3.301333),
-        )
-        val now = Timestamp.now()
-        var speed = 5
-        var currentTime = now.seconds
-        points.map { point ->
-            val instant = Instant.ofEpochSecond(currentTime)
-            val newInstant = instant.plusSeconds(3)
-            db.collection("users")
-                .document(auth.currentUser?.uid.toString())
-                .collection("journeys")
-                .document("0y7IhcutyFuCVDZClPbA")
-                .collection("points")
-                .add(
-                    PointObject(
-                        geoPoint = GeoPoint(point.latitude, point.longitude),
-                        speed = speed.toLong(),
-                        time = Timestamp(newInstant.epochSecond, newInstant.nano),
-                        tilt = Random.nextInt(0, 35).toLong(),
-                    )
-                )
-            speed += 5
-            currentTime += 3
-        }
-
-    }
-
 
     suspend fun getJourney(journeyId: String) {
         val dbref = db.collection("users")
@@ -130,30 +88,6 @@ class JourneyDetailsViewModel : ViewModel() {
         }
     }
 
-    fun convertGpxAndReturnString(): String {
-        val builder = StringBuilder()
-
-        builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
-        builder.append("<gpx version=\"1.1\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n")
-        builder.append("  <metadata>\n")
-        builder.append("    <name>${TimestampUtils().toDateTimeString(journeyDetailsUiState.value.journey?.startDateTime!!)}</name>\n")
-        builder.append("  </metadata>\n")
-        builder.append("  <trk>\n")
-        builder.append("    <trkseg>\n")
-
-        for (point in journeyDetailsUiState.value.journey?.points!!) {
-            builder.append("      <trkpt lat=\"${point.geoPoint.latitude}\" lon=\"${point.geoPoint.longitude}\">\n")
-            builder.append("      </trkpt>\n")
-            builder.append("      <time>${point.time.toDate()}</time>\n")
-        }
-
-        builder.append("    </trkseg>\n")
-        builder.append("  </trk>\n")
-        builder.append("</gpx>\n")
-
-        return builder.toString()
-    }
-
     fun setCurrentPoint(point: PointObject) {
         _journeyDetailsUiState.value = _journeyDetailsUiState.value.copy(
             currentPoint = point,
@@ -167,18 +101,4 @@ class JourneyDetailsViewModel : ViewModel() {
     fun getPlayerState(): JourneyPlayerState {
         return _journeyDetailsUiState.value.playerState
     }
-}
-
-data class JourneyDetailsUIState(
-    var isLoading: Boolean = true,
-    var journey: JourneyObject? = null,
-    var errorMsg: String? = null,
-    val currentPoint: PointObject? = null,
-    val playerState: JourneyPlayerState = JourneyPlayerState.STOPPED,
-)
-
-enum class JourneyPlayerState {
-    PLAYING,
-    STOPPED,
-    PAUSED,
 }

@@ -1,4 +1,4 @@
-package fr.motoconnect.ui.utils
+package fr.motoconnect.data.utils
 
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat

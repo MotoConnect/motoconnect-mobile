@@ -53,7 +53,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import fr.motoconnect.MainActivity
 import fr.motoconnect.R
 import fr.motoconnect.ui.navigation.MotoConnectNavigationRoutes
-import fr.motoconnect.ui.utils.MarkerCustomUtils
+import fr.motoconnect.data.utils.MarkerCustomUtils
 import fr.motoconnect.viewmodel.MapViewModel
 
 @SuppressLint("MissingPermission")

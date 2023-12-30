@@ -114,7 +114,6 @@ fun MainScreen(
                     backgroundColor = MaterialTheme.colorScheme.primary,
                 ) {
                     MotoConnectNavigationRoutes.values().forEach { item ->
-
                         if (item.displayInBar) {
                             BottomNavigationItem(
                                 selected = currentDestination?.hierarchy?.any { it.route == item.name } == true,
