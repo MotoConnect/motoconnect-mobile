@@ -1,9 +1,18 @@
 package fr.motoconnect.ui.screen.journey
 
-import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -12,28 +21,58 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapType
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import fr.motoconnect.R
 import fr.motoconnect.data.model.JourneyObject
+import fr.motoconnect.data.model.PointObject
 import fr.motoconnect.ui.component.Loading
+import fr.motoconnect.ui.utils.MarkerCustomUtils
+import fr.motoconnect.ui.utils.TimestampUtils
 import fr.motoconnect.viewmodel.JourneyDetailsViewModel
+import fr.motoconnect.viewmodel.JourneyPlayerState
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @Composable
 fun JourneyDetailsScreen(
@@ -53,7 +92,15 @@ fun JourneyDetailsScreen(
             TopAppBar(
                 backgroundColor = MaterialTheme.colorScheme.primary,
                 title = {
-                    Text(text = "Journey details")
+                    when {
+                        journeyDetailsUIState.journey == null -> {
+                            Text(text = stringResource(R.string.journey_details))
+                        }
+
+                        else -> {
+                            Text(text = TimestampUtils().toDateString(journeyDetailsUIState.journey?.startDateTime!!))
+                        }
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -76,57 +123,56 @@ fun JourneyDetailsScreen(
             )
         }
     ) {
-        Column(
+        Box(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(it)
+                .fillMaxSize(),
         ) {
+
             when {
+
                 journeyDetailsUIState.isLoading -> {
                     Loading()
                 }
 
                 journeyDetailsUIState.journey == null -> {
-                    Text(text = "Journey not found")
+                    Text(text = stringResource(R.string.journey_not_found))
+                    //TODO: Add an illustration
                 }
 
                 else -> {
-                    Log.d(
-                        "TAG",
-                        "JourneyDetailsScreen: " + journeyDetailsUIState.journey.toString()
-                    )
 
                     /*
-                    Button(onClick = { journeyDetailsViewModel.addJourney() }) {
-                        Text(text = "Click me")
-                    }
-                    */
-                    JourneyDetailsContent(journeyDetailsUIState.journey!!)
+                        Button(onClick = { journeyDetailsViewModel.addJourney() }) {
+                            Text(text = "Click me")
+                        }
+                        */
+                    JourneyDetailsContent(journeyDetailsUIState.journey!!, journeyDetailsViewModel)
                 }
             }
         }
-
     }
 
 }
 
 @Composable
 fun JourneyDetailsContent(
-    journey: JourneyObject
+    journey: JourneyObject,
+    journeyDetailsViewModel: JourneyDetailsViewModel
 ) {
+    val context = LocalContext.current
+
+    val journeyDetailsUIState by journeyDetailsViewModel.journeyDetailsUiState.collectAsState()
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(
-            calculateMidPoint(
+        position = journeyDetailsUIState.journey?.points?.first()?.geoPoint?.let {
+            CameraPosition.fromLatLngZoom(
                 LatLng(
-                    journey.points.first().geoPoint.latitude,
-                    journey.points.first().geoPoint.longitude
-                ), LatLng(
-                    journey.points.last().geoPoint.latitude,
-                    journey.points.last().geoPoint.longitude
-                )
-            ), 16f
-        )
+                    it.latitude,
+                    it.longitude
+                ), 15f
+            )
+        }!!
     }
 
     GoogleMap(
@@ -140,14 +186,175 @@ fun JourneyDetailsContent(
                 R.raw.map_style
             ),
         ),
+        uiSettings = MapUiSettings(
+            mapToolbarEnabled = false,
+            zoomControlsEnabled = false,
+        ),
     ) {
-        DrawPolyline(journey)
+        DrawJourney(journey)
+
+        if (journeyDetailsUIState.currentPoint != null) {
+            Marker(
+                state = MarkerState(
+                    LatLng(
+                        journeyDetailsUIState.currentPoint!!.geoPoint.latitude,
+                        journeyDetailsUIState.currentPoint!!.geoPoint.longitude
+                    )
+                ),
+                icon = MarkerCustomUtils().bitmapDescriptorFromVector(
+                    context,
+                    R.drawable.moto_position
+                ),
+                anchor = Offset(0.5f, 0.5f)
+            )
+        }
     }
+    BoxOnMap(journeyDetailsViewModel = journeyDetailsViewModel)
 
 }
 
 @Composable
-fun DrawPolyline(
+fun BoxOnMap(
+    journeyDetailsViewModel: JourneyDetailsViewModel
+) {
+    val journeyDetailsUIState by journeyDetailsViewModel.journeyDetailsUiState.collectAsState()
+
+    Box(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter,
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            PointInfoComponent(point = journeyDetailsUIState.currentPoint!!)
+            SliderJourneyComponent(
+                journeyDetailsViewModel = journeyDetailsViewModel
+            )
+        }
+
+    }
+}
+
+@Composable
+fun PointInfoComponent(
+    point: PointObject
+) {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20))
+            .background(MaterialTheme.colorScheme.tertiary)
+            .width(200.dp)
+            .padding(20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround,
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(16.dp)
+                .drawBehind {
+                    drawCircle(
+                        color = Color(0xFF343333),
+                        radius = 160f,
+                    )
+                },
+            textAlign = TextAlign.Center,
+            color = Color.White,
+            fontSize = 18.sp,
+            text = "${point.speed}\nkm/h",
+            fontWeight = FontWeight.Bold
+        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.moto_front),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(50.dp)
+                    .rotate(point.tilt.toFloat()),
+            )
+            Text(
+                color = MaterialTheme.colorScheme.primary,
+                text = "${getTilt(point)}°",
+                fontSize = 18.sp,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SliderJourneyComponent(
+    journeyDetailsViewModel: JourneyDetailsViewModel
+) {
+    var sliderPosition by remember { mutableFloatStateOf(0f) }
+    val journeyDetailsUIState by journeyDetailsViewModel.journeyDetailsUiState.collectAsState()
+
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(60))
+            .background(MaterialTheme.colorScheme.tertiary)
+            .padding(16.dp, 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Image(
+            painter = if (journeyDetailsUIState.playerState == JourneyPlayerState.PLAYING)
+                painterResource(id = R.drawable.baseline_pause_24)
+            else
+                painterResource(id = R.drawable.baseline_play_arrow_24),
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+            contentDescription = null,
+            modifier = Modifier.clickable {
+                togglePlayJourney(
+                    journeyDetailsUIState.journey!!,
+                    journeyDetailsViewModel,
+                )
+            }
+        )
+        Text(
+            color = MaterialTheme.colorScheme.primary,
+            text = timeStampToTime(journeyDetailsUIState.currentPoint?.time?.seconds!!),
+            fontSize = 18.sp,
+        )
+
+        Slider(
+            value = journeyDetailsUIState.currentPoint?.let {
+                journeyDetailsUIState.journey?.points?.indexOf(
+                    it
+                )?.toFloat()!!
+            } ?: 0f,
+            onValueChange = {
+                journeyDetailsViewModel.setCurrentPoint(
+                    journeyDetailsUIState.journey?.points!![it.toInt()]
+                )
+                sliderPosition = it
+            },
+            valueRange = 0f..journeyDetailsUIState.journey?.points?.size?.toFloat()?.minus(1f)!!,
+            steps = journeyDetailsUIState.journey?.points?.size?.minus(2)!!,
+            thumb = {
+                Image(
+                    painter = painterResource(id = R.drawable.moto_position),
+                    contentDescription = null,
+                    Modifier
+                        .height(50.dp)
+                        .width(50.dp)
+                )
+            },
+            enabled = journeyDetailsUIState.playerState != JourneyPlayerState.PLAYING,
+        )
+
+    }
+}
+
+@Composable
+fun DrawJourney(
     journey: JourneyObject
 ) {
     for (i in 0 until journey.points.size - 1) {
@@ -165,11 +372,35 @@ fun DrawPolyline(
             color = getColorBasedOnSpeed(journey.points[i].speed),
             width = 15f,
         )
-
     }
+    Marker(
+        state = MarkerState(
+            LatLng(
+                journey.points.first().geoPoint.latitude,
+                journey.points.first().geoPoint.longitude
+            )
+        ),
+        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN),
+
+        )
+    Marker(
+        state = MarkerState(
+            LatLng(
+                journey.points.last().geoPoint.latitude,
+                journey.points.last().geoPoint.longitude
+            )
+        ),
+        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+    )
 }
 
-fun getColorBasedOnSpeed(speed: Long): Color {
+private fun getTilt(
+    point: PointObject,
+): Long {
+    return kotlin.math.abs(point.tilt)
+}
+
+private fun getColorBasedOnSpeed(speed: Long): Color {
 
     return when (speed) {
         in 0..20 -> Color(0xFF7dfa00)
@@ -184,30 +415,44 @@ fun getColorBasedOnSpeed(speed: Long): Color {
 
 }
 
-fun calculateMidPoint(point1: LatLng, point2: LatLng): LatLng {
-    // Convert latitude and longitude to radians
-    val lat1 = Math.toRadians(point1.latitude)
-    val lon1 = Math.toRadians(point1.longitude)
-    val lat2 = Math.toRadians(point2.latitude)
-    val lon2 = Math.toRadians(point2.longitude)
-
-    // Calculate components Bx and By for simplifying expressions
-    val Bx = Math.cos(lat2) * Math.cos(lon2 - lon1)
-    val By = Math.cos(lat2) * Math.sin(lon2 - lon1)
-
-    // Calculate latitude of the midpoint (lat3)
-    val lat3 = Math.atan2(
-        Math.sin(lat1) + Math.sin(lat2),
-        Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By)
-    )
-
-    // Calculate longitude of the midpoint (lon3)
-    val lon3 = lon1 + Math.atan2(By, Math.cos(lat1) + Bx)
-
-    // Convert results back to degrees
-    val latitude = Math.toDegrees(lat3)
-    val longitude = Math.toDegrees(lon3)
-
-    return LatLng(latitude, longitude)
+private fun timeStampToTime(timeStamp: Long): String {
+    val date = Date(timeStamp * 1000L)
+    val sdf = SimpleDateFormat("HH:mm")
+    return sdf.format(date)
 }
 
+private fun togglePlayJourney(
+    journey: JourneyObject,
+    journeyDetailsViewModel: JourneyDetailsViewModel,
+) {
+    if (journeyDetailsViewModel.journeyDetailsUiState.value.playerState == JourneyPlayerState.PLAYING) {
+        journeyDetailsViewModel.setPlayerState(JourneyPlayerState.PAUSED)
+    } else if (journeyDetailsViewModel.journeyDetailsUiState.value.playerState == JourneyPlayerState.STOPPED) {
+        journeyDetailsViewModel.setPlayerState(JourneyPlayerState.PLAYING)
+        playJourney(journey, journeyDetailsViewModel)
+    } else {
+        journeyDetailsViewModel.setPlayerState(JourneyPlayerState.PLAYING)
+    }
+}
+
+@OptIn(DelicateCoroutinesApi::class)
+private fun playJourney(journey: JourneyObject, journeyDetailsViewModel: JourneyDetailsViewModel) {
+
+    GlobalScope.launch {
+        for (i in 0 until journey.points.size) {
+            if (journeyDetailsViewModel.getPlayerState() == JourneyPlayerState.PAUSED) {
+                while (journeyDetailsViewModel.getPlayerState() == JourneyPlayerState.PAUSED) {
+                    kotlinx.coroutines.delay(100)
+                }
+            }
+
+            journeyDetailsViewModel.setCurrentPoint(journey.points[i])
+            kotlinx.coroutines.delay(1000)
+        }
+
+        journeyDetailsViewModel.setCurrentPoint(journey.points.first())
+        journeyDetailsViewModel.setPlayerState(JourneyPlayerState.STOPPED)
+    }
+
+
+}

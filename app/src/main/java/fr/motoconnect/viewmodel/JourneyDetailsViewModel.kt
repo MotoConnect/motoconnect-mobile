@@ -20,13 +20,14 @@ import kotlinx.coroutines.tasks.await
 import java.time.Instant
 import kotlin.random.Random
 
-class JourneyDetailsViewModel: ViewModel() {
+class JourneyDetailsViewModel : ViewModel() {
 
     val TAG = "JourneyDetailsViewModel"
 
 
     private val _journeyDetailsUiState = MutableStateFlow(JourneyDetailsUIState())
-    val journeyDetailsUiState: StateFlow<JourneyDetailsUIState> = _journeyDetailsUiState.asStateFlow()
+    val journeyDetailsUiState: StateFlow<JourneyDetailsUIState> =
+        _journeyDetailsUiState.asStateFlow()
 
     val db = Firebase.firestore
     val auth = Firebase.auth
@@ -55,12 +56,14 @@ class JourneyDetailsViewModel: ViewModel() {
                 .collection("journeys")
                 .document("0y7IhcutyFuCVDZClPbA")
                 .collection("points")
-                .add(PointObject(
-                    geoPoint = GeoPoint(point.latitude, point.longitude),
-                    speed = speed.toLong(),
-                    time = Timestamp(newInstant.epochSecond, newInstant.nano),
-                    tilt = Random.nextInt(0, 35).toLong(),
-                ))
+                .add(
+                    PointObject(
+                        geoPoint = GeoPoint(point.latitude, point.longitude),
+                        speed = speed.toLong(),
+                        time = Timestamp(newInstant.epochSecond, newInstant.nano),
+                        tilt = Random.nextInt(0, 35).toLong(),
+                    )
+                )
             speed += 5
             currentTime += 3
         }
@@ -108,11 +111,11 @@ class JourneyDetailsViewModel: ViewModel() {
                     finished = document.get("finished") as Boolean?,
                     points = pointsList,
                 )
-
                 _journeyDetailsUiState.value = JourneyDetailsUIState(
                     isLoading = false,
                     journey = journey,
                     errorMsg = null,
+                    currentPoint = journey.points.first(),
                 )
             }
         } catch (exception: Exception) {
@@ -120,15 +123,37 @@ class JourneyDetailsViewModel: ViewModel() {
                 isLoading = false,
                 journey = null,
                 errorMsg = exception.message,
+                currentPoint = null,
             )
             Log.w(TAG, "Error getting documents: ", exception)
         }
     }
 
+    fun setCurrentPoint(point: PointObject) {
+        _journeyDetailsUiState.value = _journeyDetailsUiState.value.copy(
+            currentPoint = point,
+        )
+    }
+
+    fun setPlayerState(state: JourneyPlayerState) {
+        _journeyDetailsUiState.value = _journeyDetailsUiState.value.copy(playerState = state)
+    }
+
+    fun getPlayerState(): JourneyPlayerState {
+        return _journeyDetailsUiState.value.playerState
+    }
 }
 
 data class JourneyDetailsUIState(
     var isLoading: Boolean = true,
     var journey: JourneyObject? = null,
     var errorMsg: String? = null,
+    val currentPoint: PointObject? = null,
+    val playerState: JourneyPlayerState = JourneyPlayerState.STOPPED,
 )
+
+enum class JourneyPlayerState {
+    PLAYING,
+    STOPPED,
+    PAUSED,
+}

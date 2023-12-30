@@ -64,4 +64,6 @@
     <string name="no_journeys_yet">No journeys yet</string>
     <string name="duration">Durée: %1$s</string>
     <string name="see_more">Voir plus</string>
+    <string name="journey_details">Détails du trajet</string>
+    <string name="journey_not_found">Trajet introuvable</string>
 </resources>

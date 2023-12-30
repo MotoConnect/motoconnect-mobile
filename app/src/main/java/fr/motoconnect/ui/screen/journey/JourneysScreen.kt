@@ -25,14 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.google.firebase.Timestamp
 import fr.motoconnect.R
 import fr.motoconnect.data.model.JourneyObject
 import fr.motoconnect.ui.component.Loading
+import fr.motoconnect.ui.utils.TimestampUtils
 import fr.motoconnect.viewmodel.JourneyViewModel
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun JourneysScreen(
@@ -111,7 +108,7 @@ fun JourneyListComponent(
         } else {
             for (journey in journeys) {
                 JourneyCard(journey, onClickSeeMore = {
-                    navController.navigate("journeyDetails/"+ journey.id)
+                    navController.navigate("journeyDetails/" + journey.id)
                 })
             }
         }
@@ -137,7 +134,7 @@ fun JourneyCard(
                 .padding(0.dp, 0.dp, 16.dp, 0.dp),
         ) {
             Text(
-                journeyObject.startDateTime?.toDateString()!!,
+                TimestampUtils().toDateString(journeyObject.startDateTime!!),
                 color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
             )
@@ -171,10 +168,4 @@ fun Long.toHourMinute(): String {
     val minute = this % 60
     if (hour == 0L) return "${minute}min"
     return "${hour}h ${minute}min"
-}
-
-fun Timestamp.toDateString(): String {
-    val date = Date(this.seconds * 1000)
-    val format = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-    return format.format(date)
 }
