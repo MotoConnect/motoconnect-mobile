@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -63,11 +64,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-fun onAccountDelete() {
-    //A faire plus tard
-    Log.d("NOTIF", "ACCOUNT DELETE")
-}
-
 fun onAppVersion(context: Context) {
     Toast.makeText(
         context,
@@ -78,7 +74,7 @@ fun onAppVersion(context: Context) {
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-fun askNotification(notificationPermission: PermissionState,context: Context) {
+fun askNotification(notificationPermission: PermissionState, context: Context) {
     if (!notificationPermission.status.isGranted) {
         Log.d("NOTIF", context.getString(R.string.AskNotificiation))
         notificationPermission.launchPermissionRequest()
@@ -89,13 +85,13 @@ fun askNotification(notificationPermission: PermissionState,context: Context) {
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-fun askLocation(locationPermission: PermissionState,context: Context) {
+fun askLocation(locationPermission: PermissionState, context: Context) {
     if (!locationPermission.status.isGranted) {
-        Log.d("NOTIF", context.getString(R.string.askLocation))
+        Log.d("LOCATION", context.getString(R.string.askLocation))
         locationPermission.launchPermissionRequest()
 
     } else {
-        Log.d("NOTIF", context.getString(R.string.acceptedLocation))
+        Log.d("LOCATION", context.getString(R.string.acceptedLocation))
     }
 }
 
@@ -108,7 +104,7 @@ fun ProfileScreen(
 ) {
     val context = LocalContext.current
     val store = DisplayStore(context)
-    val darkmode = store.getDarkMode.collectAsState(initial =false)
+    val darkmode = store.getDarkMode.collectAsState(initial = false)
 
     val notificationPermission = rememberPermissionState(
         permission = android.Manifest.permission.POST_NOTIFICATIONS
@@ -142,7 +138,7 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-                ProfileCard(auth,authenticationViewModel)
+                ProfileCard(auth, authenticationViewModel)
             }
             item {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -175,7 +171,7 @@ fun ProfileScreen(
 }
 
 @Composable
-fun ProfileCard(auth: FirebaseAuth,authenticationViewModel: AuthenticationViewModel) {
+fun ProfileCard(auth: FirebaseAuth, authenticationViewModel: AuthenticationViewModel) {
 
     val currentUser = auth.currentUser
 
@@ -384,11 +380,11 @@ fun PreferencesCard(
 }
 
 @Composable
-fun SwitchLogic(darkmode: Boolean, store: DisplayStore){
+fun SwitchLogic(darkmode: Boolean, store: DisplayStore) {
     Switch(
         checked = darkmode,
         onCheckedChange = {
-            CoroutineScope(Dispatchers.IO).launch{
+            CoroutineScope(Dispatchers.IO).launch {
                 store.setDarkMode(it)
             }
         },
@@ -420,6 +416,9 @@ fun SwitchLogic(darkmode: Boolean, store: DisplayStore){
 
 @Composable
 fun ActionCard(authenticationViewModel: AuthenticationViewModel) {
+
+    var showDialogDeleteAccount by remember { mutableStateOf(false) }
+
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiary,
@@ -485,7 +484,7 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel) {
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Button(
-                    onClick = { onAccountDelete() },
+                    onClick = { showDialogDeleteAccount = true },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.secondary,
                     )
@@ -497,6 +496,69 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel) {
                 }
             }
         }
+    }
+    if (showDialogDeleteAccount) {
+        AlertDialog(
+            onDismissRequest = { showDialogDeleteAccount = false },
+            title = {
+                Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+                    Icon(
+                        imageVector = Icons.Outlined.Warning,
+                        contentDescription = null,
+                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = stringResource(R.string.delete_account_confirmation),
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            },
+            text = {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(
+                        text = stringResource(R.string.account_delete_confirmation_dialog),
+                        color = MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+
+            },
+            backgroundColor = MaterialTheme.colorScheme.tertiary,
+            dismissButton = {
+                Button(
+                    onClick = { showDialogDeleteAccount = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                    ),
+                    modifier = Modifier.padding(0.dp, 0.dp, 10.dp, 10.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.close),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDialogDeleteAccount = false
+                        authenticationViewModel.accountDelete()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                    ),
+                ) {
+                    Text(
+                        text = stringResource(R.string.delete),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+        )
     }
 }
 
