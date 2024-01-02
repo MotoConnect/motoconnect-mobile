@@ -126,7 +126,7 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel) {
                     Icon(
                         imageVector = Icons.Outlined.Warning,
                         contentDescription = null,
-                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                        modifier = Modifier.size(SwitchDefaults.IconSize.times(1.7f)),
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
@@ -136,17 +136,11 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel) {
                 }
             },
             text = {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
                     Text(
                         text = stringResource(R.string.account_delete_confirmation_dialog),
                         color = MaterialTheme.colorScheme.primary,
-                        textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Left,
                     )
-                }
-
             },
             backgroundColor = MaterialTheme.colorScheme.tertiary,
             dismissButton = {
@@ -158,7 +152,7 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel) {
                     modifier = Modifier.padding(0.dp, 0.dp, 10.dp, 10.dp),
                 ) {
                     Text(
-                        text = stringResource(R.string.close),
+                        text = stringResource(R.string.cancel),
                         color = MaterialTheme.colorScheme.primary
                     )
                 }

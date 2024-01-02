@@ -143,7 +143,7 @@ class AuthenticationViewModel(
     fun accountDelete(){
         if(auth.currentUser != null){
             db.collection("users")
-                .document(FirebaseAuth.getInstance().currentUser!!.uid)
+                .document(auth.currentUser!!.uid)
                 .delete().addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         auth.currentUser!!.delete().addOnCompleteListener { task2 ->
