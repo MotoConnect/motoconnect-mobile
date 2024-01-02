@@ -65,4 +65,9 @@
     <string name="AcceptedNotification">Accepted the notifications</string>
     <string name="askLocation">Asking for location</string>
     <string name="acceptedLocation">Has accepted location</string>
+    <string name="delete_account_confirmation">Deleting account</string>
+    <string name="account_delete_confirmation_dialog">Do you really want to delete your account ?</string>
+    <string name="accountdelete_failed">"accountDelete failed : "</string>
+    <string name="dbcollection_delete_failed">"dbcollection delete failed : "</string>
+    <string name="no_user_loged_in_user_is_null">No user loged in, user is null</string>
 </resources>
