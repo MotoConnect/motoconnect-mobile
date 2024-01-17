@@ -112,6 +112,29 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel) {
                 }
             }
         }
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(14.dp),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Modification Compte", modifier = Modifier.padding(14.dp))
+                Button(
+                    onClick = {},
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary
+                    )
+                ) {
+                    Text(
+                        text = "Modifier",
+                    )
+                }
+            }
+        }
     }
     if (showDialogDeleteAccount) {
         AlertDialog(
@@ -131,11 +154,11 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel) {
                 }
             },
             text = {
-                    Text(
-                        text = stringResource(R.string.account_delete_confirmation_dialog),
-                        color = MaterialTheme.colorScheme.primary,
-                        textAlign = TextAlign.Left,
-                    )
+                Text(
+                    text = stringResource(R.string.account_delete_confirmation_dialog),
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Left,
+                )
             },
             backgroundColor = MaterialTheme.colorScheme.tertiary,
             dismissButton = {
