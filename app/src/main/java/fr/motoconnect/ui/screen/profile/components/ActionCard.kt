@@ -32,11 +32,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import fr.motoconnect.R
+import fr.motoconnect.ui.navigation.ProfileNavigationRoutes
 import fr.motoconnect.viewmodel.AuthenticationViewModel
 
 @Composable
-fun ActionCard(authenticationViewModel: AuthenticationViewModel) {
+fun ActionCard(authenticationViewModel: AuthenticationViewModel, navController: NavController) {
 
     var showDialogDeleteAccount by remember { mutableStateOf(false) }
 
@@ -122,15 +124,15 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel) {
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Modification Compte", modifier = Modifier.padding(14.dp))
+                Text(stringResource(R.string.modification_compte), modifier = Modifier.padding(14.dp))
                 Button(
-                    onClick = {},
+                    onClick = {navController.navigate(ProfileNavigationRoutes.ModifyProfile.name)},
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.secondary
                     )
                 ) {
                     Text(
-                        text = "Modifier",
+                        text = stringResource(R.string.modifier),
                     )
                 }
             }

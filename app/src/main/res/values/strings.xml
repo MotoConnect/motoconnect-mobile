@@ -55,7 +55,7 @@
     <string name="about">About</string>
     <string name="application_infos">Application infos</string>
     <string name="application_version">Application version</string>
-    <string name="app_info">This is the app info.</string>
+    <string name="app_info">Welcome to the MotoConnect App. You\'ll be capable of monitoring the information of your motorcycle along your travels. For the application to correctly function, we need you to autorize the location and notifications.</string>
     <string name="close">Close</string>
     <string name="version_name">"Version Name"</string>
     <string name="version_code">"Version Code"</string>
@@ -84,4 +84,6 @@
     <string name="duration_without_args">Duration</string>
     <string name="distance_without_args" translatable="false">Distance</string>
     <string name="export_as_kml">Export as KML</string>
+    <string name="modification_compte">Modify Account</string>
+    <string name="modifier">Modify</string>
 </resources>

@@ -50,7 +50,7 @@
     <string name="about">À propos</string>
     <string name="application_infos">Informations</string>
     <string name="application_version">Version</string>
-    <string name="app_info">Voici les informations sur l\'application</string>
+    <string name="app_info">Bienvenue sur l\'application MotoConnect. Vous serez capable de contrôler les informations de votre moto ainsi que de vos trajets. Afin qu\'elle fonctionne de manière optimale, nous vous demandons d\'autoriser la position ainsi que les notifications.</string>
     <string name="close">Fermer</string>
     <string name="version_name">Nom de la version</string>
     <string name="version_code">Code de la version</string>
@@ -77,4 +77,6 @@
     <string name="vitesse_max">Vitesse max</string>
     <string name="duration_without_args">Durée</string>
     <string name="export_as_kml">Export as KML</string>
+    <string name="modification_compte">Modification Compte</string>
+    <string name="modifier">Modifier</string>
 </resources>
