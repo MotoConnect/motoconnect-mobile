@@ -4,15 +4,16 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,16 +29,25 @@ import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import fr.motoconnect.viewmodel.AuthenticationViewModel
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+
+enum class ButtonStateProfilePicture { PICK, UPLOAD }
 
 @Composable
-fun ChangeProfilePictureComponent(authenticationViewModel: AuthenticationViewModel, auth: FirebaseAuth) {
+fun ChangeProfilePictureComponent(
+    authenticationViewModel: AuthenticationViewModel,
+    auth: FirebaseAuth
+) {
+
+    val buttonStateProfilePicture = remember { mutableStateOf(ButtonStateProfilePicture.PICK) }
 
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
 
     val storage = FirebaseStorage.getInstance()
-    val imageRef = storage.reference.child( auth.currentUser!!.uid + "/profilePicture")
+    val imageRef = storage.reference.child(auth.currentUser!!.uid + "/profilePicture")
 
     LaunchedEffect(Unit) {
         imageRef.downloadUrl.addOnSuccessListener { uri ->
@@ -54,12 +64,10 @@ fun ChangeProfilePictureComponent(authenticationViewModel: AuthenticationViewMod
             }
         }
     )
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.primary),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth().padding(0.dp, 0.dp, 0.dp, 15.dp),
+        horizontalArrangement = Arrangement.Center
     ) {
         imageUri?.let {
             Image(
@@ -70,22 +78,37 @@ fun ChangeProfilePictureComponent(authenticationViewModel: AuthenticationViewMod
                     .size(100.dp, 100.dp)
             )
         }
-
-        TextButton(
-            onClick = {
-                galleryLauncher.launch("image/*")
-            }
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Pick image"
-            )
-        }
-
-        Button(onClick = {
-            authenticationViewModel.changeProfilePicture(imageUri!!)
-        }) {
-            Text(text = "Update Profile Picture", color = MaterialTheme.colorScheme.secondary)
+            Button(
+                onClick = {
+                    when (buttonStateProfilePicture.value) {
+                        ButtonStateProfilePicture.PICK -> {
+                            galleryLauncher.launch("image/*")
+                            buttonStateProfilePicture.value = ButtonStateProfilePicture.UPLOAD
+                        }
+                        ButtonStateProfilePicture.UPLOAD -> {
+                            if (imageUri != null) {
+                                authenticationViewModel.changeProfilePicture(imageUri!!)
+                                buttonStateProfilePicture.value = ButtonStateProfilePicture.PICK
+                            }
+                        }
+                    }
+                }, colors = ButtonDefaults.buttonColors(
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                )
+            ) {
+                Text(
+                    text = when (buttonStateProfilePicture.value) {
+                        ButtonStateProfilePicture.PICK -> "Pick image"
+                        ButtonStateProfilePicture.UPLOAD -> "Update Profile Picture"
+                    }
+                )
+            }
         }
     }
-
 }

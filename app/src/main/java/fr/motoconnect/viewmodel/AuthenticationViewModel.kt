@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.io.File
 
 class AuthenticationViewModel(
     private val auth: FirebaseAuth,
@@ -181,19 +180,15 @@ class AuthenticationViewModel(
     }
 
     fun changeUsername(newUsername: String) {
-        if (newUsername.isNotEmpty()) {
-            db.collection("users").document(auth.currentUser!!.uid)
-                .update("displayName", newUsername).addOnCompleteListener() { task ->
+        db.collection("users").document(auth.currentUser!!.uid)
+            .update("displayName", newUsername).addOnCompleteListener() { task ->
                 if (task.isSuccessful) {
                     Log.d("ChangeUsername", "The username has been changed")
+                    Toast.makeText(context, "The username has been changed", Toast.LENGTH_SHORT).show()
                 } else {
                     Log.d("ChangeUsername", "The username has not been changed")
                 }
             }
-        } else {
-            Log.d("ChangeUsername", "The new username cannot be null, field is empty")
-            Toast.makeText(context, "The new username cannot be null", Toast.LENGTH_SHORT).show()
-        }
     }
 
     fun changeProfilePicture(imageUri: Uri) {
@@ -203,43 +198,29 @@ class AuthenticationViewModel(
 
         val uploadTask: UploadTask = storageRef.putFile(imageUri)
 
-        val file = File(imageUri.path!!)
-
-        if (file.length() > 0) {
-            uploadTask.addOnProgressListener { taskSnapshot ->
-                val progress = (100.0 * taskSnapshot.bytesTransferred) / taskSnapshot.totalByteCount
-                Log.d("Upload", "Upload is $progress% done")
-            }.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d("Upload", "Upload success")
-                    Toast.makeText(context, "The profile picture has been changed", Toast.LENGTH_SHORT).show()
-                } else {
-                    Log.d("Upload", "Upload failed")
-                }
+        uploadTask.addOnProgressListener { taskSnapshot ->
+            val progress = (100.0 * taskSnapshot.bytesTransferred) / taskSnapshot.totalByteCount
+            Log.d("Upload", "Upload is $progress% done")
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("Upload", "Upload success")
+                Toast.makeText(context, "The profile picture has been changed", Toast.LENGTH_SHORT).show()
+            } else {
+                Log.d("Upload", "Upload failed")
+                Toast.makeText(context, "The profile picture couldn't be changed", Toast.LENGTH_SHORT).show()
             }
-        }
-        else{
-            Log.d("Upload", "Upload failed, file is empty")
         }
     }
 
-    fun changePassword(password: String, confirmationPassword: String) {
-        if (password.isNotEmpty() && confirmationPassword.isNotEmpty())
-            if (password == confirmationPassword) {
-                auth.currentUser!!.updatePassword(password).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d("Password", "The password has been changed")
-                    } else {
-                        Log.d("Password", "The password has not been changed")
-                    }
-                }
+    fun changePassword(password: String) {
+        auth.currentUser!!.updatePassword(password).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("Password", "The password has been changed")
+                Toast.makeText(context, "The password has been changed", Toast.LENGTH_SHORT).show()
             } else {
-                Log.d("Password","The password has not been changed, the two passwords are not the same")
-                Toast.makeText(context, "The two passwords are not the same", Toast.LENGTH_SHORT).show()
+                Log.d("Password", "The password has not been changed : " + task.exception!!.message)
+                Toast.makeText(context, "Error, The password has not been changed, plea", Toast.LENGTH_SHORT).show()
             }
-        else {
-            Log.d("Password","The password cannot be empty")
-            Toast.makeText(context, "The password cannot be empty", Toast.LENGTH_SHORT).show()
         }
     }
 }
