@@ -12,11 +12,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
+import fr.motoconnect.R
 import fr.motoconnect.ui.navigation.MotoConnectNavigationRoutes
 import fr.motoconnect.ui.screen.profile.components.ChangePasswordComponent
 import fr.motoconnect.ui.screen.profile.components.ChangeProfilePictureComponent
@@ -39,7 +41,7 @@ fun ModifyProfileScreen(
     ) {
 
         Text(
-            text = "Modify Profile Picture",
+            text = stringResource(R.string.modify_profile_picture),
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(14.dp),
@@ -49,7 +51,7 @@ fun ModifyProfileScreen(
         ChangeProfilePictureComponent(authenticationViewModel = authenticationViewModel, auth = auth)
 
         Text(
-            text = "Modify Username",
+            text = stringResource(R.string.modify_username),
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(14.dp),
@@ -59,7 +61,7 @@ fun ModifyProfileScreen(
         ChangeUsernameComponent(authenticationViewModel = authenticationViewModel)
 
         Text(
-            text = "Modify Password",
+            text = stringResource(R.string.modify_password),
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(14.dp),
@@ -77,7 +79,7 @@ fun ModifyProfileScreen(
                 containerColor = MaterialTheme.colorScheme.secondary,
             )
         ) {
-            Text(text = "Return")
+            Text(text = stringResource(R.string.return_back))
         }
 
     }

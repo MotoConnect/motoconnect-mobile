@@ -183,10 +183,10 @@ class AuthenticationViewModel(
         db.collection("users").document(auth.currentUser!!.uid)
             .update("displayName", newUsername).addOnCompleteListener() { task ->
                 if (task.isSuccessful) {
-                    Log.d("ChangeUsername", "The username has been changed")
-                    Toast.makeText(context, "The username has been changed", Toast.LENGTH_SHORT).show()
+                    Log.d("ChangeUsername", context.getString(R.string.the_username_has_been_changed))
+                    Toast.makeText(context, context.getString(R.string.the_username_has_been_changed), Toast.LENGTH_SHORT).show()
                 } else {
-                    Log.d("ChangeUsername", "The username has not been changed")
+                    Log.d("ChangeUsername", context.getString(R.string.the_username_has_not_been_changed))
                 }
             }
     }
@@ -198,16 +198,16 @@ class AuthenticationViewModel(
 
         val uploadTask: UploadTask = storageRef.putFile(imageUri)
 
-        uploadTask.addOnProgressListener { taskSnapshot ->
-            val progress = (100.0 * taskSnapshot.bytesTransferred) / taskSnapshot.totalByteCount
-            Log.d("Upload", "Upload is $progress% done")
+        uploadTask.addOnProgressListener {
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Log.d("Upload", "Upload success")
-                Toast.makeText(context, "The profile picture has been changed", Toast.LENGTH_SHORT).show()
+                Log.d("Upload", context.getString(R.string.upload_success))
+                Toast.makeText(context,
+                    context.getString(R.string.the_profile_picture_has_been_changed), Toast.LENGTH_SHORT).show()
             } else {
-                Log.d("Upload", "Upload failed")
-                Toast.makeText(context, "The profile picture couldn't be changed", Toast.LENGTH_SHORT).show()
+                Log.d("Upload", context.getString(R.string.upload_failed))
+                Toast.makeText(context,
+                    context.getString(R.string.the_profile_picture_couldn_t_be_changed), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -215,11 +215,11 @@ class AuthenticationViewModel(
     fun changePassword(password: String) {
         auth.currentUser!!.updatePassword(password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Log.d("Password", "The password has been changed")
-                Toast.makeText(context, "The password has been changed", Toast.LENGTH_SHORT).show()
+                Log.d("Password", context.getString(R.string.the_password_has_been_changed))
+                Toast.makeText(context, context.getString(R.string.the_password_has_been_changed), Toast.LENGTH_SHORT).show()
             } else {
-                Log.d("Password", "The password has not been changed : " + task.exception!!.message)
-                Toast.makeText(context, "Error, The password has not been changed, plea", Toast.LENGTH_SHORT).show()
+                Log.d("Password", context.getString(R.string.the_password_has_not_been_changed) + task.exception!!.message)
+                Toast.makeText(context, context.getString(R.string.error_the_password_has_not_been_changed_please_login_again), Toast.LENGTH_SHORT).show()
             }
         }
     }

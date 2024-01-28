@@ -19,12 +19,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.motoconnect.R
+import fr.motoconnect.data.model.ButtonPasswordUsernameState
 import fr.motoconnect.viewmodel.AuthenticationViewModel
-
-enum class ButtonStateUsername { EDIT, UPDATE }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +40,7 @@ fun ChangeUsernameComponent(
 
     val isUsernameError = remember { mutableStateOf(false) }
 
-    val buttonStateUsername = remember { mutableStateOf(ButtonStateUsername.EDIT) }
+    val buttonStateUsername = remember { mutableStateOf(ButtonPasswordUsernameState.EDIT) }
 
     Column(
         modifier = Modifier
@@ -51,7 +52,12 @@ fun ChangeUsernameComponent(
         TextField(
             value = username.value,
             onValueChange = { username.value = it },
-            label = { Text(text = "Username", color = MaterialTheme.colorScheme.secondary) },
+            label = {
+                Text(
+                    text = stringResource(R.string.username),
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            },
             readOnly = !isEditable.value,
             isError = isUsernameError.value,
             placeholder = { Text(authUiState.user?.displayName.toString()) },
@@ -63,18 +69,19 @@ fun ChangeUsernameComponent(
             Button(
                 onClick = {
                     when (buttonStateUsername.value) {
-                        ButtonStateUsername.EDIT -> {
+                        ButtonPasswordUsernameState.EDIT -> {
                             isEditable.value = !isEditable.value
-                            buttonStateUsername.value = ButtonStateUsername.UPDATE
+                            buttonStateUsername.value = ButtonPasswordUsernameState.UPDATE
                         }
-                        ButtonStateUsername.UPDATE -> {
-                            if(username.value.isEmpty()) {
+
+                        ButtonPasswordUsernameState.UPDATE -> {
+                            if (username.value.isEmpty()) {
                                 isUsernameError.value = true
                             } else {
                                 isUsernameError.value = false
                                 authenticationViewModel.changeUsername(username.value)
                                 isEditable.value = false
-                                buttonStateUsername.value = ButtonStateUsername.EDIT
+                                buttonStateUsername.value = ButtonPasswordUsernameState.EDIT
                             }
                         }
                     }
@@ -85,8 +92,8 @@ fun ChangeUsernameComponent(
             ) {
                 Text(
                     text = when (buttonStateUsername.value) {
-                        ButtonStateUsername.EDIT -> "Edit"
-                        ButtonStateUsername.UPDATE -> "Update Username"
+                        ButtonPasswordUsernameState.EDIT -> stringResource(R.string.edit)
+                        ButtonPasswordUsernameState.UPDATE -> stringResource(R.string.update_username)
                     }
                 )
             }
@@ -95,7 +102,7 @@ fun ChangeUsernameComponent(
         if (isUsernameError.value) {
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = "Username cannot be empty",
+                text = stringResource(R.string.username_cannot_be_empty),
                 color = MaterialTheme.colorScheme.error,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,

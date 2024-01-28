@@ -31,8 +31,9 @@ import com.google.firebase.storage.FirebaseStorage
 import fr.motoconnect.viewmodel.AuthenticationViewModel
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-
-enum class ButtonStateProfilePicture { PICK, UPLOAD }
+import androidx.compose.ui.res.stringResource
+import fr.motoconnect.R
+import fr.motoconnect.data.model.ButtonProfilePictureState
 
 @Composable
 fun ChangeProfilePictureComponent(
@@ -40,7 +41,7 @@ fun ChangeProfilePictureComponent(
     auth: FirebaseAuth
 ) {
 
-    val buttonStateProfilePicture = remember { mutableStateOf(ButtonStateProfilePicture.PICK) }
+    val buttonStateProfilePicture = remember { mutableStateOf(ButtonProfilePictureState.PICK) }
 
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
@@ -66,7 +67,9 @@ fun ChangeProfilePictureComponent(
     )
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().padding(0.dp, 0.dp, 0.dp, 15.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp, 0.dp, 0.dp, 15.dp),
         horizontalArrangement = Arrangement.Center
     ) {
         imageUri?.let {
@@ -86,14 +89,14 @@ fun ChangeProfilePictureComponent(
             Button(
                 onClick = {
                     when (buttonStateProfilePicture.value) {
-                        ButtonStateProfilePicture.PICK -> {
+                        ButtonProfilePictureState.PICK -> {
                             galleryLauncher.launch("image/*")
-                            buttonStateProfilePicture.value = ButtonStateProfilePicture.UPLOAD
+                            buttonStateProfilePicture.value = ButtonProfilePictureState.UPLOAD
                         }
-                        ButtonStateProfilePicture.UPLOAD -> {
+                        ButtonProfilePictureState.UPLOAD -> {
                             if (imageUri != null) {
                                 authenticationViewModel.changeProfilePicture(imageUri!!)
-                                buttonStateProfilePicture.value = ButtonStateProfilePicture.PICK
+                                buttonStateProfilePicture.value = ButtonProfilePictureState.PICK
                             }
                         }
                     }
@@ -104,8 +107,8 @@ fun ChangeProfilePictureComponent(
             ) {
                 Text(
                     text = when (buttonStateProfilePicture.value) {
-                        ButtonStateProfilePicture.PICK -> "Pick image"
-                        ButtonStateProfilePicture.UPLOAD -> "Update Profile Picture"
+                        ButtonProfilePictureState.PICK -> stringResource(R.string.pick_image)
+                        ButtonProfilePictureState.UPLOAD -> stringResource(R.string.update_profile_picture)
                     }
                 )
             }

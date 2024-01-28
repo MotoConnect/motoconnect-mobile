@@ -18,13 +18,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.motoconnect.R
+import fr.motoconnect.data.model.ButtonPasswordUsernameState
 import fr.motoconnect.viewmodel.AuthenticationViewModel
-
-enum class ButtonStatePassword { EDIT, UPDATE }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +44,7 @@ fun ChangePasswordComponent(
 
     val isNotEqual = remember { mutableStateOf(false) }
 
-    val buttonStatePassword = remember { mutableStateOf(ButtonStatePassword.EDIT) }
+    val buttonStatePassword = remember { mutableStateOf(ButtonPasswordUsernameState.EDIT) }
 
     Column(
         modifier = Modifier
@@ -57,7 +58,7 @@ fun ChangePasswordComponent(
             onValueChange = { password.value = it },
             label = {
                 Text(
-                    text = "New Password",
+                    text = stringResource(R.string.new_password),
                     color = MaterialTheme.colorScheme.secondary
                 )
             },
@@ -71,7 +72,7 @@ fun ChangePasswordComponent(
             onValueChange = { confirmationPassword.value = it },
             label = {
                 Text(
-                    text = "Confirm Password",
+                    text = stringResource(R.string.confirm_password),
                     color = MaterialTheme.colorScheme.secondary
                 )
             },
@@ -83,51 +84,15 @@ fun ChangePasswordComponent(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(0.dp, 15.dp, 0.dp, 15.dp)
         ) {
-            /*Button(
-                onClick = { isEditable.value = !isEditable.value },
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = MaterialTheme.colorScheme.primary,
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                )
-            ) {
-                Text(
-                    text = if (isEditable.value) "Cancel" else "Edit",
-                )
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            Button(
-                onClick = {
-                    if (confirmationPassword.value != password.value) {
-                        isNotEqual.value = true
-                        isPasswordError.value = true
-                    } else if (password.value.isEmpty()) {
-                        isEmpty.value = true
-                        isPasswordError.value = true
-                    } else {
-                        isNotEqual.value = false
-                        isEmpty.value = false
-                        isPasswordError.value = false
-                        authenticationViewModel.changePassword(
-                            password.value,
-                        )
-                    }
-                }, colors = ButtonDefaults.buttonColors(
-                    contentColor = MaterialTheme.colorScheme.primary,
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                )
-            ) {
-                Text(text = "Update Password")
-            }
-        }*/
             Button(
                 onClick = {
                     when (buttonStatePassword.value) {
-                        ButtonStatePassword.EDIT -> {
+                        ButtonPasswordUsernameState.EDIT -> {
                             isEditable.value = !isEditable.value
-                            buttonStatePassword.value = ButtonStatePassword.UPDATE
+                            buttonStatePassword.value = ButtonPasswordUsernameState.UPDATE
                         }
 
-                        ButtonStatePassword.UPDATE -> {
+                        ButtonPasswordUsernameState.UPDATE -> {
                             if (confirmationPassword.value != password.value) {
                                 isNotEqual.value = true
                                 isPasswordError.value = true
@@ -140,7 +105,7 @@ fun ChangePasswordComponent(
                                 isPasswordError.value = false
                                 authenticationViewModel.changePassword(password.value)
                                 isEditable.value = false
-                                buttonStatePassword.value = ButtonStatePassword.EDIT
+                                buttonStatePassword.value = ButtonPasswordUsernameState.EDIT
                             }
                         }
                     }
@@ -151,8 +116,8 @@ fun ChangePasswordComponent(
             ) {
                 Text(
                     text = when (buttonStatePassword.value) {
-                        ButtonStatePassword.EDIT -> "Edit"
-                        ButtonStatePassword.UPDATE -> "Update Password"
+                        ButtonPasswordUsernameState.EDIT -> stringResource(R.string.edit)
+                        ButtonPasswordUsernameState.UPDATE -> stringResource(R.string.update_password)
                     }
                 )
             }
@@ -160,7 +125,7 @@ fun ChangePasswordComponent(
         if (isNotEqual.value) {
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = "Passwords are not the same",
+                text = stringResource(R.string.passwords_are_not_the_same),
                 color = MaterialTheme.colorScheme.error,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -168,7 +133,7 @@ fun ChangePasswordComponent(
         } else if (isEmpty.value) {
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = "Password cannot be empty",
+                text = stringResource(R.string.password_cannot_be_empty),
                 color = MaterialTheme.colorScheme.error,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,

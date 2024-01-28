@@ -86,4 +86,27 @@
     <string name="export_as_kml">Export as KML</string>
     <string name="modification_compte">Modify Account</string>
     <string name="modifier">Modify</string>
+    <string name="pick_image">Pick image</string>
+    <string name="update_profile_picture">Update Profile Picture</string>
+    <string name="edit">Edit</string>
+    <string name="update_username">Update Username</string>
+    <string name="username_cannot_be_empty">Username cannot be empty</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="update_password">Update Password</string>
+    <string name="passwords_are_not_the_same">Passwords are not the same</string>
+    <string name="password_cannot_be_empty">Password cannot be empty</string>
+    <string name="modify_profile_picture">Modify Profile Picture</string>
+    <string name="modify_username">Modify Username</string>
+    <string name="modify_password">Modify Password</string>
+    <string name="return_back">Return</string>
+    <string name="the_username_has_been_changed">The username has been changed</string>
+    <string name="the_username_has_not_been_changed">The username has not been changed</string>
+    <string name="upload_success">Upload success</string>
+    <string name="upload_failed">Upload failed</string>
+    <string name="the_profile_picture_has_been_changed">The profile picture has been changed</string>
+    <string name="the_profile_picture_couldn_t_be_changed">The profile picture couldn\'t be changed</string>
+    <string name="the_password_has_been_changed">The password has been changed</string>
+    <string name="the_password_has_not_been_changed">"The password has not been changed : "</string>
+    <string name="error_the_password_has_not_been_changed_please_login_again">Error, the password has not been changed, please login again</string>
 </resources>
