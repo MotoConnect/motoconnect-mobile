@@ -19,10 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import fr.motoconnect.R
 import fr.motoconnect.data.model.ButtonPasswordUsernameState
 import fr.motoconnect.viewmodel.AuthenticationViewModel
@@ -114,30 +112,9 @@ fun ChangePasswordComponent(
                     containerColor = MaterialTheme.colorScheme.secondary,
                 )
             ) {
-                Text(
-                    text = when (buttonStatePassword.value) {
-                        ButtonPasswordUsernameState.EDIT -> stringResource(R.string.edit)
-                        ButtonPasswordUsernameState.UPDATE -> stringResource(R.string.update_password)
-                    }
-                )
+                ChangePasswordDisplay(buttonStatePassword = buttonStatePassword.value)
             }
         }
-        if (isNotEqual.value) {
-            Text(
-                modifier = Modifier.padding(start = 16.dp),
-                text = stringResource(R.string.passwords_are_not_the_same),
-                color = MaterialTheme.colorScheme.error,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        } else if (isEmpty.value) {
-            Text(
-                modifier = Modifier.padding(start = 16.dp),
-                text = stringResource(R.string.password_cannot_be_empty),
-                color = MaterialTheme.colorScheme.error,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
+        ChangePasswordErrors(isNotEqual = isNotEqual.value, isEmpty = isEmpty.value)
     }
 }
