@@ -80,7 +80,7 @@ class AuthenticationViewModel(
             }
     }
 
-    fun signUp(email: String, password: String, displayName: String) {
+    fun signUp(email: String, password: String, displayName: String, imageProfile: Uri) {
         if (!isMandatoryFieldsFilled(email, password)) {
             _authUiState.value = AuthUIState(
                 isLogged = false,
@@ -104,6 +104,7 @@ class AuthenticationViewModel(
                             db.collection("users")
                                 .document(auth.currentUser!!.uid)
                                 .set(UserObject(displayName = displayName))
+                            changeProfilePicture(imageProfile)
                             viewModelScope.launch {
                                 getCurrentUser()
                             }
@@ -146,6 +147,7 @@ class AuthenticationViewModel(
 
     fun accountDelete() {
         if (auth.currentUser != null) {
+            deleteProfilePicture()
             db.collection("users")
                 .document(auth.currentUser!!.uid)
                 .delete().addOnCompleteListener { task ->
@@ -208,6 +210,20 @@ class AuthenticationViewModel(
                 Log.d("Upload", context.getString(R.string.upload_failed))
                 Toast.makeText(context,
                     context.getString(R.string.the_profile_picture_couldn_t_be_changed), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun deleteProfilePicture(){
+
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference.child(auth.currentUser!!.uid + "/profilePicture")
+
+        storageRef.delete().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("Delete", context.getString(R.string.delete_success))
+            } else {
+                Log.d("Delete", context.getString(R.string.delete_failed))
             }
         }
     }
