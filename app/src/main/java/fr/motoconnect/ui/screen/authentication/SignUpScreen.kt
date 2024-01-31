@@ -60,7 +60,7 @@ fun SignUpScreen(
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val displayName = remember { mutableStateOf("") }
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var imageUri by remember { mutableStateOf(Uri.parse("android.resource://fr.motoconnect/${R.drawable.moto}")) }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -120,12 +120,7 @@ fun SignUpScreen(
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    if(imageUri == null) {
-                        imageUri = Uri.parse("android.resource://fr.motoconnect/${R.drawable.moto}")
-                        authenticationViewModel.signUp(email.value, password.value, displayName.value, imageUri!!)
-                    }else{
-                        authenticationViewModel.signUp(email.value, password.value, displayName.value, imageUri!!)
-                    }
+                    authenticationViewModel.signUp(email.value, password.value, displayName.value, imageUri!!)
                 }
             ),
             onValueChange = { password.value = it },
@@ -161,17 +156,11 @@ fun SignUpScreen(
                 Text(text = stringResource(id = R.string.pick_image))
             }
         }
-
         Spacer(modifier = Modifier.height(20.dp))
         Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
                 onClick = {
-                    if(imageUri == null) {
-                        imageUri = Uri.parse("android.resource://fr.motoconnect/${R.drawable.moto}")
-                        authenticationViewModel.signUp(email.value, password.value, displayName.value, imageUri!!)
-                    }else{
-                        authenticationViewModel.signUp(email.value, password.value, displayName.value, imageUri!!)
-                    }
+                    authenticationViewModel.signUp(email.value, password.value, displayName.value, imageUri!!)
                 },
                 colors = ButtonDefaults.buttonColors(
                     contentColor = MaterialTheme.colorScheme.primary,
