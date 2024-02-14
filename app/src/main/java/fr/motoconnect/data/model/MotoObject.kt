@@ -11,7 +11,7 @@ data class MotoObject(
 )
 
 enum class BaseDistance(val distance: Int) {
-    BREAK_FLUID(20000),
+    BRAKE_FLUID(20000),
     CHAIN_LUBRICATION(250),
     ENGINE_OIL(6000),
 }
