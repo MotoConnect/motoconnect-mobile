@@ -214,20 +214,18 @@ fun MotoFluidsComponent(
 }
 
 @Composable
-fun LinearProgressMotoFuilds(fluidPercentage: Float){
-
-    if (fluidPercentage > 1f) {
-        LinearProgressIndicator(
-            progress = 1f,
-            color = colorResource(id =R.color.red),
-            modifier = Modifier.fillMaxWidth()
-        )
-    } else {
-        LinearProgressIndicator(
-            progress = fluidPercentage,
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.fillMaxWidth()
-        )
+fun LinearProgressMotoFuilds(fluidPercentage: Float) {
+    val color = when {
+        fluidPercentage >=  1f -> colorResource(id = R.color.red)
+        fluidPercentage >  2f /  3 -> colorResource(id = R.color.orange)
+        fluidPercentage >  1f /  3 -> colorResource(id = R.color.yellow)
+        else -> MaterialTheme.colorScheme.secondary
     }
+
+    LinearProgressIndicator(
+        progress = if (fluidPercentage >  1f)  1f else fluidPercentage,
+        color = color,
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
