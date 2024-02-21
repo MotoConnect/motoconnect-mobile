@@ -27,6 +27,7 @@ import fr.motoconnect.R
 import fr.motoconnect.data.model.BaseDistance
 import fr.motoconnect.viewmodel.uiState.MotoUIState
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 
 @Composable
@@ -37,14 +38,9 @@ fun MotoFluidsComponent(
     resetChainLubrication: () -> Unit,
 ) {
 
-    val engineOilPercentage =
-        motoUIState.moto?.engineOil?.toFloat()?.div(BaseDistance.ENGINE_OIL.distance.toFloat())
-            ?: 0f
-    val breakFluidPercentage =
-        motoUIState.moto?.breakFluid?.toFloat()?.div(BaseDistance.BRAKE_FLUID.distance.toFloat())
-            ?: 0f
-    val chainLubricationPercentage = motoUIState.moto?.chainLubrication?.toFloat()
-        ?.div(BaseDistance.CHAIN_LUBRICATION.distance.toFloat()) ?: 0f
+    val engineOilPercentage = motoUIState.moto?.engineOil?.toFloat()?.div(BaseDistance.ENGINE_OIL.distance.toFloat()) ?: 0f
+    val breakFluidPercentage = motoUIState.moto?.breakFluid?.toFloat()?.div(BaseDistance.BRAKE_FLUID.distance.toFloat()) ?: 0f
+    val chainLubricationPercentage = motoUIState.moto?.chainLubrication?.toFloat()?.div(BaseDistance.CHAIN_LUBRICATION.distance.toFloat()) ?: 0f
 
     LazyColumn(
         modifier = Modifier
@@ -71,7 +67,8 @@ fun MotoFluidsComponent(
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth().padding(15.dp),
+                            .fillMaxWidth()
+                            .padding(15.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
 
@@ -84,11 +81,7 @@ fun MotoFluidsComponent(
                                 color = MaterialTheme.colorScheme.tertiary,
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            LinearProgressIndicator(
-                                progress = engineOilPercentage,
-                                color = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                            LinearProgressMotoFuilds(fluidPercentage = engineOilPercentage)
                             Spacer(modifier = Modifier.height(8.dp))
                             Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
                                 Button(
@@ -127,7 +120,8 @@ fun MotoFluidsComponent(
             ){
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth().padding(15.dp),
+                        .fillMaxWidth()
+                        .padding(15.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -139,11 +133,7 @@ fun MotoFluidsComponent(
                             color = MaterialTheme.colorScheme.tertiary,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        LinearProgressIndicator(
-                            progress = breakFluidPercentage,
-                            color = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                        LinearProgressMotoFuilds(fluidPercentage = breakFluidPercentage)
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Button(
@@ -180,7 +170,8 @@ fun MotoFluidsComponent(
             ){
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth().padding(15.dp),
+                        .fillMaxWidth()
+                        .padding(15.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -192,11 +183,7 @@ fun MotoFluidsComponent(
                             color = MaterialTheme.colorScheme.tertiary
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        LinearProgressIndicator(
-                            progress = chainLubricationPercentage,
-                            color = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                        LinearProgressMotoFuilds(fluidPercentage = chainLubricationPercentage)
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Button(
@@ -220,6 +207,27 @@ fun MotoFluidsComponent(
                 }
             }
         }
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+}
+
+@Composable
+fun LinearProgressMotoFuilds(fluidPercentage: Float){
+
+    if (fluidPercentage > 1f) {
+        LinearProgressIndicator(
+            progress = 1f,
+            color = colorResource(id =R.color.red),
+            modifier = Modifier.fillMaxWidth()
+        )
+    } else {
+        LinearProgressIndicator(
+            progress = fluidPercentage,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
