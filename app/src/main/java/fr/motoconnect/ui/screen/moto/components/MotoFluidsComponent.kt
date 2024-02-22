@@ -54,161 +54,72 @@ fun MotoFluidsComponent(
             Spacer(modifier = Modifier.height(10.dp))
         }
         item {
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimary,
-                    contentColor = MaterialTheme.colorScheme.tertiary
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 6.dp
-                ), modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(15.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-
-                    ) {
-                        Column {
-                            Text(
-                                text = stringResource(R.string.moto_engine_oil),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.tertiary,
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            LinearProgressMotoFuilds(fluidPercentage = engineOilPercentage)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Button(
-                                    onClick = { resetEngineOil() },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.tertiary,
-                                        contentColor = MaterialTheme.colorScheme.primary
-                                    )
-                                ) {
-                                    Text(text = stringResource(R.string.moto_reset))
-                                }
-                                Text(
-                                    text = "${motoUIState.moto?.engineOil}/${BaseDistance.ENGINE_OIL.distance} km",
-                                    color = MaterialTheme.colorScheme.tertiary,
-                                    fontSize = 20.sp,
-                                    textAlign = TextAlign.End,
-                                    modifier= Modifier.padding(0.dp, 10.dp, 0.dp, 0.dp)
-                                )
-                            }
-
-                        }
-                    }
-                }
-            }
+            MotoFluidsCard(fluidPercentage = engineOilPercentage, reset = resetEngineOil, fluidName = stringResource(R.string.moto_engine_oil), limit = "${motoUIState.moto?.engineOil}/${BaseDistance.ENGINE_OIL.distance} km")
         }
         item {
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimary,
-                    contentColor = MaterialTheme.colorScheme.tertiary
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 6.dp
-                ), modifier = Modifier
-                    .fillMaxWidth()
-            ){
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(15.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column (modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = stringResource(R.string.moto_break_fluid),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.tertiary,
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        LinearProgressMotoFuilds(fluidPercentage = breakFluidPercentage)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Button(
-                                onClick = { resetBrakeFluid() },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.tertiary,
-                                    contentColor = MaterialTheme.colorScheme.primary
-                                ),
-                            ) {
-                                Text(text = stringResource(R.string.moto_reset))
-                            }
-                            Text(
-                                text = "${motoUIState.moto?.breakFluid}/${BaseDistance.BRAKE_FLUID.distance} km",
-                                color = MaterialTheme.colorScheme.tertiary,
-                                fontSize = 20.sp,
-                                textAlign = TextAlign.End,
-                                modifier= Modifier.padding(0.dp, 10.dp, 0.dp, 0.dp)
-                            )
-                        }
-                    }
-                }
-            }
+            MotoFluidsCard(fluidPercentage = breakFluidPercentage, reset = resetBrakeFluid, fluidName = stringResource(R.string.moto_break_fluid), limit = "${motoUIState.moto?.breakFluid}/${BaseDistance.BRAKE_FLUID.distance} km")
         }
         item {
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimary,
-                    contentColor = MaterialTheme.colorScheme.tertiary
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 6.dp
-                ), modifier = Modifier
-                    .fillMaxWidth()
-            ){
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(15.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column (modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = stringResource(R.string.moto_chain_greasing),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.tertiary
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        LinearProgressMotoFuilds(fluidPercentage = chainLubricationPercentage)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Button(
-                                onClick = { resetChainLubrication() },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.tertiary,
-                                    contentColor = MaterialTheme.colorScheme.primary
-                                )
-                            ) {
-                                Text(text = stringResource(R.string.moto_reset))
-                            }
-                            Text(
-                                text = "${motoUIState.moto?.chainLubrication}/${BaseDistance.CHAIN_LUBRICATION.distance} km",
-                                color = MaterialTheme.colorScheme.tertiary,
-                                fontSize = 20.sp,
-                                textAlign = TextAlign.End,
-                                modifier= Modifier.padding(0.dp, 10.dp, 0.dp, 0.dp)
-                            )
-                        }
-                    }
-                }
-            }
+            MotoFluidsCard(fluidPercentage = chainLubricationPercentage, reset = resetChainLubrication, fluidName = stringResource(R.string.moto_chain_greasing), limit = "${motoUIState.moto?.chainLubrication}/${BaseDistance.CHAIN_LUBRICATION.distance} km")
         }
         item {
             Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+}
+
+@Composable
+fun MotoFluidsCard(fluidPercentage: Float, reset: () -> Unit, fluidName : String,limit : String){
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onPrimary,
+            contentColor = MaterialTheme.colorScheme.tertiary
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ), modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+
+                ) {
+                Column {
+                    Text(
+                        text = fluidName,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.tertiary,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LinearProgressMotoFuilds(fluidPercentage = fluidPercentage)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Button(
+                            onClick = { reset() },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.tertiary,
+                                contentColor = MaterialTheme.colorScheme.primary
+                            )
+                        ) {
+                            Text(text = stringResource(R.string.moto_reset))
+                        }
+                        Text(
+                            text = limit,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.End,
+                            modifier= Modifier.padding(0.dp, 10.dp, 0.dp, 0.dp)
+                        )
+                    }
+
+                }
+            }
         }
     }
 }

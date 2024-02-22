@@ -39,98 +39,63 @@ fun MotoJourneysComponent(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimary,
-                    contentColor = MaterialTheme.colorScheme.tertiary
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 6.dp
-                ), modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.map_background),
-                        contentDescription = "Background Icon",
-                        alignment = Alignment.Center,
-                    )
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth().padding(0.dp, 8.dp, 70.dp, 0.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.End
-                    ) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = stringResource(R.string.moto_number_of_journeys),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.tertiary,
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "${motoUIState.moto?.totalJourney}",
-                            fontSize = 32.sp,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            modifier = Modifier.padding(0.dp, 0.dp, 60.dp, 0.dp)
-                        )
-                    }
-                }
-            }
+            MotoJourneysCard(stats = motoUIState.moto?.totalJourney.toString(), text = stringResource(R.string.moto_number_of_journeys),60,0)
         }
         item {
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimary,
-                    contentColor = MaterialTheme.colorScheme.tertiary
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 6.dp
-                ), modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.map_background),
-                        contentDescription = "Background Icon",
-                        alignment = Alignment.Center,
-                    )
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth().padding(0.dp, 8.dp, 70.dp, 0.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.End
-                    ) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = stringResource(R.string.moto_total_distance),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            modifier = Modifier.padding(0.dp, 0.dp, 10.dp, 0.dp)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "${motoUIState.moto?.distance} km",
-                            fontSize = 32.sp,
-                            color = MaterialTheme.colorScheme.tertiary,
-                        )
-                    }
-                }
-            }
+            MotoJourneysCard(stats = "${motoUIState.moto?.distance} km", text = stringResource(R.string.moto_total_distance),0,10)
         }
         item {
             Spacer(modifier = Modifier.padding(0.dp, 16.dp))
         }
     }
 
+}
+
+@Composable
+fun MotoJourneysCard(stats: String, text : String,gap : Int,gap2: Int){
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onPrimary,
+            contentColor = MaterialTheme.colorScheme.tertiary
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ), modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.map_background),
+                contentDescription = "Background Icon",
+                alignment = Alignment.Center,
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp, 8.dp, 70.dp, 0.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.End
+            ) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = text,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.padding(0.dp, 0.dp, gap2.dp, 0.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stats,
+                    fontSize = 32.sp,
+                    color = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.padding(0.dp, 0.dp, gap.dp, 0.dp)
+                )
+            }
+        }
+    }
 }
