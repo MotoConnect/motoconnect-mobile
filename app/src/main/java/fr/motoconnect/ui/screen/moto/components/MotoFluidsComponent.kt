@@ -39,7 +39,7 @@ fun MotoFluidsComponent(
 ) {
 
     val engineOilPercentage = motoUIState.moto?.engineOil?.toFloat()?.div(BaseDistance.ENGINE_OIL.distance.toFloat()) ?: 0f
-    val breakFluidPercentage = motoUIState.moto?.breakFluid?.toFloat()?.div(BaseDistance.BRAKE_FLUID.distance.toFloat()) ?: 0f
+    val brakeFluidPercentage = motoUIState.moto?.brakeFluid?.toFloat()?.div(BaseDistance.BRAKE_FLUID.distance.toFloat()) ?: 0f
     val chainLubricationPercentage = motoUIState.moto?.chainLubrication?.toFloat()?.div(BaseDistance.CHAIN_LUBRICATION.distance.toFloat()) ?: 0f
 
     LazyColumn(
@@ -57,7 +57,7 @@ fun MotoFluidsComponent(
             MotoFluidsCard(fluidPercentage = engineOilPercentage, reset = resetEngineOil, fluidName = stringResource(R.string.moto_engine_oil), limit = "${motoUIState.moto?.engineOil}/${BaseDistance.ENGINE_OIL.distance} km")
         }
         item {
-            MotoFluidsCard(fluidPercentage = breakFluidPercentage, reset = resetBrakeFluid, fluidName = stringResource(R.string.moto_break_fluid), limit = "${motoUIState.moto?.breakFluid}/${BaseDistance.BRAKE_FLUID.distance} km")
+            MotoFluidsCard(fluidPercentage = brakeFluidPercentage, reset = resetBrakeFluid, fluidName = stringResource(R.string.moto_break_fluid), limit = "${motoUIState.moto?.brakeFluid}/${BaseDistance.BRAKE_FLUID.distance} km")
         }
         item {
             MotoFluidsCard(fluidPercentage = chainLubricationPercentage, reset = resetChainLubrication, fluidName = stringResource(R.string.moto_chain_greasing), limit = "${motoUIState.moto?.chainLubrication}/${BaseDistance.CHAIN_LUBRICATION.distance} km")

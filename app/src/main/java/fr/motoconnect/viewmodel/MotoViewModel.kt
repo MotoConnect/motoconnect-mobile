@@ -92,7 +92,7 @@ class MotoViewModel: ViewModel() {
                 .collection("motos")
                 .document(motoUiState.value.moto?.name.toString())
                 .update(
-                    "breakFluid", 0
+                    "brakeFluid", 0
                 )
         } catch (e: Exception) {
             e.printStackTrace()
