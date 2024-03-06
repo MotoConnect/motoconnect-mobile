@@ -124,7 +124,7 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel, navController: 
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(stringResource(R.string.modification_compte), modifier = Modifier.padding(14.dp))
+                Text(stringResource(R.string.modification_compte), modifier = Modifier.padding(14.dp),fontWeight = FontWeight.SemiBold)
                 Button(
                     onClick = {navController.navigate(ProfileNavigationRoutes.ModifyProfile.name)},
                     colors = ButtonDefaults.buttonColors(
