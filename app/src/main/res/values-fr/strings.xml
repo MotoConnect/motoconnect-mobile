@@ -44,7 +44,7 @@
     <string name="location_activated">Position activée</string>
     <string name="notification_activated">Notification activée</string>
     <string name="Authorization">Autoriser</string>
-    <string name="display">Choix du thème</string>
+    <string name="display">Thème sombre</string>
     <string name="account_deletion">Supprimer le compte</string>
     <string name="delete">Supprimer</string>
     <string name="about">À propos</string>
@@ -111,4 +111,7 @@
     <string name="delete_failed">L\'image n\'a pas été supprimée</string>
     <string name="error_email_or_password">Email ou mot de passe incorrect</string>
     <string name="error_email">Email invalide</string>
+    <string name="front_wheel">Roue avant</string>
+    <string name="rear_wheel">Roue arrière</string>
+    <string name="etat_des_roues">État des roues</string>
 </resources>

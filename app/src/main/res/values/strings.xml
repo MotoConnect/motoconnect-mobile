@@ -48,7 +48,7 @@
     <string name="notification" translatable="false">Notification</string>
     <string name="notification_activated">Notification activated</string>
     <string name="Authorization">Authorize</string>
-    <string name="display">Theme choice</string>
+    <string name="display">Dark theme</string>
     <string name="actions" translatable="false">Actions</string>
     <string name="account_deletion">Account deletion</string>
     <string name="delete">Delete</string>
@@ -118,4 +118,7 @@
     <string name="delete_failed">The Picture was not deleted</string>
     <string name="error_email_or_password">Invalid email or password</string>
     <string name="error_email">Invalid email</string>
+    <string name="front_wheel">Front tyre</string>
+    <string name="rear_wheel">Rear tyre</string>
+    <string name="etat_des_roues">Tyre status</string>
 </resources>
