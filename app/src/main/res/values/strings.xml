@@ -48,7 +48,7 @@
     <string name="notification" translatable="false">Notification</string>
     <string name="notification_activated">Notification activated</string>
     <string name="Authorization">Authorize</string>
-    <string name="display">Display</string>
+    <string name="display">Theme choice</string>
     <string name="actions" translatable="false">Actions</string>
     <string name="account_deletion">Account deletion</string>
     <string name="delete">Delete</string>
