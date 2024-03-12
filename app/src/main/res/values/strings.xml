@@ -120,4 +120,7 @@
     <string name="error_email">Invalid email</string>
     <string name="cannot_pair_device">Unable to pair MotoConnect device</string>
     <string name="device_paired">Correctly paired MotoConnect device</string>
+    <string name="front_wheel">Front tyre</string>
+    <string name="rear_wheel">Rear tyre</string>
+    <string name="etat_des_roues">Tyre status</string>
 </resources>

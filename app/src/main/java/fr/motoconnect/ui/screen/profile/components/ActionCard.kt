@@ -87,6 +87,7 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel, navController: 
                 ) {
                     Text(
                         text = stringResource(id = R.string.sign_out),
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -110,6 +111,7 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel, navController: 
                 ) {
                     Text(
                         text = stringResource(R.string.delete),
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -133,6 +135,7 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel, navController: 
                 ) {
                     Text(
                         text = stringResource(R.string.modifier),
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -162,7 +165,7 @@ fun ActionCard(authenticationViewModel: AuthenticationViewModel, navController: 
                     textAlign = TextAlign.Left,
                 )
             },
-            backgroundColor = MaterialTheme.colorScheme.tertiary,
+            backgroundColor = MaterialTheme.colorScheme.secondary,
             dismissButton = {
                 Button(
                     onClick = { showDialogDeleteAccount = false },
