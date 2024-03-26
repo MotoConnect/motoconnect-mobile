@@ -123,6 +123,7 @@
     <string name="device_unpaired">Dispositif déconnecté avec succès</string>
     <string name="unpair">Déconnecter</string>
     <string name="fluid_level_alert">Alerte niveau liquide</string>
-    <string name="danger_level">%1$s a atteint le maximum! Le changement doit être effectué.</string>
-    <string name="warning_level">%1$s se rapproche du maximum! Pensez à le changer rapidement.</string>
+    <string name="danger_level">%1$s a atteint la distance maximale recommandée! Le changement doit être effectué.</string>
+    <string name="warning_level">%1$s se rapproche de la distance maximale recommandée! Pensez à bientôt le changer.</string>
+    <string name="alert_tyre_wear">Alerte usure pneu</string>
 </resources>

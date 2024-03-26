@@ -14,7 +14,7 @@ class NotificationService(private val context: Context) {
     fun createNotificationChannel() {
         val channel = NotificationChannel(
             "notificationID",
-            "Fluid Reminders",
+            "motoConnectChannel",
             NotificationManager.IMPORTANCE_DEFAULT
         )
         notificationManager.createNotificationChannel(channel)
@@ -22,8 +22,9 @@ class NotificationService(private val context: Context) {
 
     fun sendNotification(title: String, message: String, notificationId: Int) {
         val builder = NotificationCompat.Builder(context, "notificationID")
-            .setSmallIcon(R.mipmap.ic_launcher_round)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(title)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 

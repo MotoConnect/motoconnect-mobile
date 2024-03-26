@@ -129,7 +129,8 @@
     <string name="error_during_unpairing_device">Error during unpairing device</string>
     <string name="device_unpaired">Device unpaired with success</string>
     <string name="unpair">Unpair</string>
-    <string name="fluid_level_alert">Fluid Level Alert</string>
-    <string name="danger_level">%1$s reached the max value! Please proceed to the change immediately.</string>
-    <string name="warning_level">%1$s is getting close to the max! Consider changing it soon.</string>
+    <string name="fluid_level_alert">Fluid level alert</string>
+    <string name="danger_level">%1$s has reached the maximum recommended distance!\n Please proceed to the change immediately.</string>
+    <string name="warning_level">%1$s is getting close to the maximum recommanded distance!\n Consider changing it soon.</string>
+    <string name="alert_tyre_wear">Alert tyre wear</string>
 </resources>

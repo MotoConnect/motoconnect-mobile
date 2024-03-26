@@ -14,8 +14,8 @@ class MotoConnectApplication: Application() {
         container = DefaultAppContainer()
         instance = this
 
-        val notificationService = NotificationService(this) // Create instance
-        notificationService.createNotificationChannel() // Create channel
+        val notificationService = NotificationService(this)
+        notificationService.createNotificationChannel()
 
     }
 

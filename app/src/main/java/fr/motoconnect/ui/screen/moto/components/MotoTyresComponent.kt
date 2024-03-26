@@ -27,7 +27,9 @@ import fr.motoconnect.data.model.BaseDistance
 import fr.motoconnect.viewmodel.uiState.MotoUIState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import fr.motoconnect.data.utils.NotificationService
 
 @Composable
 fun MotoTyresComponent(
@@ -131,6 +133,7 @@ fun MotoTyresCard(
             textAlign = TextAlign.End,
         )
     }
+    MotoTyresNotifications(tyreWearPercentage, wheelPosition)
 }
 
 @Composable
@@ -148,4 +151,20 @@ fun CircularProgressMotoTyres(tyreWearPercentage: Float) {
         strokeWidth = 5.dp,
         modifier = Modifier.padding(50.dp, 0.dp, 0.dp, 0.dp)
     )
+}
+
+@Composable
+fun MotoTyresNotifications(tyreWearPercentage: Float,wheelPosition: String){
+
+    val title = stringResource(R.string.alert_tyre_wear)
+    val msgDanger = stringResource(R.string.danger_level, wheelPosition)
+    val msgWarning = stringResource(R.string.warning_level, wheelPosition)
+
+    val notificationService = NotificationService(LocalContext.current)
+
+    if (tyreWearPercentage >= 1f) {
+        notificationService.sendNotification(title, msgDanger, System.currentTimeMillis().toInt())
+    } else if (tyreWearPercentage > 2f / 3) {
+        notificationService.sendNotification(title, msgWarning, System.currentTimeMillis().toInt())
+    }
 }
