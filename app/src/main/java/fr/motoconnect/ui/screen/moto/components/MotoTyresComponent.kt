@@ -120,7 +120,7 @@ fun MotoTyresCard(
                 containerColor = MaterialTheme.colorScheme.tertiary,
                 contentColor = MaterialTheme.colorScheme.primary
             ),
-            modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 0.dp)
+            modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 10.dp)
         ) {
             Text(text = stringResource(R.string.moto_reset))
         }
