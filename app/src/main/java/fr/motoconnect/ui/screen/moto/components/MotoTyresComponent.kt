@@ -133,7 +133,6 @@ fun MotoTyresCard(
             textAlign = TextAlign.End,
         )
     }
-    MotoTyresNotifications(tyreWearPercentage, wheelPosition)
 }
 
 @Composable
@@ -154,7 +153,7 @@ fun CircularProgressMotoTyres(tyreWearPercentage: Float) {
 }
 
 @Composable
-fun MotoTyresNotifications(tyreWearPercentage: Float,wheelPosition: String){
+fun MotoTyresNotifications(tyreWearPercentage: Float,wheelPosition: String, notificationID : Int){
 
     val title = stringResource(R.string.alert_tyre_wear)
     val msgDanger = stringResource(R.string.danger_level, wheelPosition)
@@ -163,8 +162,8 @@ fun MotoTyresNotifications(tyreWearPercentage: Float,wheelPosition: String){
     val notificationService = NotificationService(LocalContext.current)
 
     if (tyreWearPercentage >= 1f) {
-        notificationService.sendNotification(title, msgDanger, System.currentTimeMillis().toInt())
+        notificationService.sendNotification(title, msgDanger, notificationID)
     } else if (tyreWearPercentage > 2f / 3) {
-        notificationService.sendNotification(title, msgWarning, System.currentTimeMillis().toInt())
+        notificationService.sendNotification(title, msgWarning, notificationID)
     }
 }

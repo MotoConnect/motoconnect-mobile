@@ -129,7 +129,6 @@ fun MotoFluidsCard(fluidPercentage: Float, reset: () -> Unit, fluidName: String,
             }
         }
     }
-    MotoFluidsNotifications(fluidPercentage,fluidName)
 }
 
 @Composable
@@ -154,7 +153,7 @@ fun LinearProgressMotoFuilds(fluidPercentage: Float) {
 }
 
 @Composable
-fun MotoFluidsNotifications(fluidPercentage: Float,fluidName: String){
+fun MotoFluidsNotifications(fluidPercentage: Float,fluidName: String, notificationID : Int){
 
     val title = stringResource(R.string.fluid_level_alert)
     val msgDanger = stringResource(R.string.danger_level, fluidName)
@@ -163,9 +162,9 @@ fun MotoFluidsNotifications(fluidPercentage: Float,fluidName: String){
     val notificationService = NotificationService(LocalContext.current)
 
     if (fluidPercentage >= 1f) {
-        notificationService.sendNotification(title, msgDanger, System.currentTimeMillis().toInt())
+        notificationService.sendNotification(title, msgDanger, notificationID)
     } else if (fluidPercentage > 2f / 3) {
-        notificationService.sendNotification(title, msgWarning, System.currentTimeMillis().toInt())
+        notificationService.sendNotification(title, msgWarning, notificationID)
     }
 }
 
