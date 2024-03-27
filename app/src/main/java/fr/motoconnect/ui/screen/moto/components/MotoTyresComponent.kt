@@ -81,7 +81,7 @@ fun MotoTyresComponent(
                         limit = "${motoUIState.moto?.frontTyreWear}/${BaseDistance.FRONT_TYRE.distance} km"
                     )
                 }
-                Spacer(modifier = Modifier.width(20.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 Column (horizontalAlignment = Alignment.CenterHorizontally){
                     MotoTyresCard(
                         tyreWearPercentage = rearTyreWearPercentage,
@@ -119,7 +119,7 @@ fun MotoTyresCard(
         Button(
             onClick = { reset() },
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.tertiary,
+                containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.primary
             ),
             modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 10.dp)

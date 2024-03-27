@@ -111,7 +111,7 @@ fun MotoFluidsCard(fluidPercentage: Float, reset: () -> Unit, fluidName: String,
                         Button(
                             onClick = { reset() },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.tertiary,
+                                containerColor = MaterialTheme.colorScheme.secondary,
                                 contentColor = MaterialTheme.colorScheme.primary
                             )
                         ) {
