@@ -162,9 +162,13 @@ fun MotoFluidsNotifications(fluidPercentage: Float,fluidName: String, notificati
     val notificationService = NotificationService(LocalContext.current)
 
     if (fluidPercentage >= 1f) {
-        notificationService.sendNotification(title, msgDanger, notificationID)
+        notificationService.sendNotification(title, msgDanger, notificationID) {
+            notificationService.getActiveNotification(notificationID)
+        }
     } else if (fluidPercentage > 2f / 3) {
-        notificationService.sendNotification(title, msgWarning, notificationID)
+        notificationService.sendNotification(title, msgWarning, notificationID) {
+            notificationService.getActiveNotification(notificationID)
+        }
     }
 }
 

@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import fr.motoconnect.MainActivity
@@ -25,14 +26,17 @@ class NotificationService(private val context: Context) {
         notificationManager.createNotificationChannel(channel)
     }
 
-    fun sendNotification(title: String, message: String, notificationId: Int) {
+    fun sendNotification(title: String, message: String, notificationId: Int, onNotificationSent: (Int) -> Unit = {}) {
 
         val taskDetailIntent = Intent(
             Intent.ACTION_VIEW,
             "https://motoconnect.com/moto".toUri(),
             context,
             MainActivity::class.java
-        )
+        ).apply {
+            putExtra("notificationId", notificationId) // Include notification ID
+            putExtra("isNotificationClicked", true)
+        }
 
         val pending: PendingIntent = TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(taskDetailIntent)
@@ -49,6 +53,19 @@ class NotificationService(private val context: Context) {
             .setAutoCancel(true)
 
         notificationManager.notify(notificationId, builder.build())
+        onNotificationSent(notificationId)
     }
 
+    fun getActiveNotification(notificationId: Int) {
+        val activeNotifications = notificationManager.activeNotifications
+
+        for (notification in activeNotifications) {
+            val activeNotificationId = notification.id
+            if (activeNotificationId == notificationId) {
+                notificationManager.cancel(notificationId)
+                Log.d("NOTIF", "Notification cancelled: $notificationId")
+                break // Exit loop after finding a match
+            }
+        }
+    }
 }

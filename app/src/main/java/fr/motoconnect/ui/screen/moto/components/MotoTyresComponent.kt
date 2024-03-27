@@ -155,6 +155,7 @@ fun CircularProgressMotoTyres(tyreWearPercentage: Float) {
 @Composable
 fun MotoTyresNotifications(tyreWearPercentage: Float,wheelPosition: String, notificationID : Int){
 
+
     val title = stringResource(R.string.alert_tyre_wear)
     val msgDanger = stringResource(R.string.danger_level, wheelPosition)
     val msgWarning = stringResource(R.string.warning_level, wheelPosition)
@@ -162,8 +163,12 @@ fun MotoTyresNotifications(tyreWearPercentage: Float,wheelPosition: String, noti
     val notificationService = NotificationService(LocalContext.current)
 
     if (tyreWearPercentage >= 1f) {
-        notificationService.sendNotification(title, msgDanger, notificationID)
+        notificationService.sendNotification(title, msgDanger, notificationID) {
+            notificationService.getActiveNotification(notificationID)
+        }
     } else if (tyreWearPercentage > 2f / 3) {
-        notificationService.sendNotification(title, msgWarning, notificationID)
+        notificationService.sendNotification(title, msgWarning, notificationID){
+            notificationService.getActiveNotification(notificationID)
+        }
     }
 }
