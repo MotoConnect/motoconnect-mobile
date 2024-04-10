@@ -153,7 +153,7 @@ fun CircularProgressMotoTyres(tyreWearPercentage: Float) {
 }
 
 @Composable
-fun MotoTyresNotifications(tyreWearPercentage: Float,wheelPosition: String, notificationID : Int){
+fun MotoTyresNotifications(tyreWearPercentage: Float, wheelPosition: String, notificationID : Int){
 
 
     val title = stringResource(R.string.alert_tyre_wear)
